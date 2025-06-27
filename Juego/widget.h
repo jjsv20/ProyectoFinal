@@ -2,6 +2,7 @@
 #define WIDGET_H
 
 #include <QWidget>
+#include "seleccion.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -17,7 +18,15 @@ public:
     Widget(QWidget *parent = nullptr);
     ~Widget();
 
+private slots:
+    void on_salir_clicked();
+
+    void on_jugar_clicked();
+
+    void on_creditos_clicked();
+
 private:
     Ui::Widget *ui;
+    Seleccion *ventanaSeleccion;
 };
 #endif // WIDGET_H

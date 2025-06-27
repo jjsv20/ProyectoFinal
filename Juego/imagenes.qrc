@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>imagenes/CAMINO AL TORNEO.png</file>
+        <file>imagenes/music.mp3</file>
+        <file>imagenes/seleccion.png</file>
+        <file>imagenes/krilinSeleccion.png</file>
+    </qresource>
+</RCC>
