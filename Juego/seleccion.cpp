@@ -1,22 +1,29 @@
 #include "seleccion.h"
+#include "krilin.h"
 #include "ui_seleccion.h"
 
-#include <QPixmap>
-
 Seleccion::Seleccion(QWidget *parent)
-    : QDialog(parent)
+    : QWidget(parent)
     , ui(new Ui::Seleccion)
 {
     ui->setupUi(this);
+    seleccion = new QGraphicsScene;
+    seleccion->setSceneRect(0, 0, 1080, 720);
+    ui->graphicsView->setScene(seleccion);
 
-    QPixmap krilin(":/imagenes/Krillin.png");
-    int ancho = 32;
-    int alto = 32;
-    int fila = 0;
-    int columna = 0;
+    QPixmap fondo(":/imagenes/seleccion.png");
+    fondoItem = new QGraphicsPixmapItem(fondo);
+    fondoItem->setZValue(-1);
+    seleccion->addItem(fondoItem);
 
-    QPixmap krilinSeleccion = krilin.copy(columna * ancho, fila * alto, ancho, alto);
-    ui->labelKrilin->setPixmap(krilinSeleccion.scaled(64, 64, Qt::KeepAspectRatio));
+    ui->graphicsView->setScene(seleccion);
+    ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    krilin = new Krilin();
+    seleccion->addItem(krilin);
+    krilin->setScale(6.0);
+    krilin->iniciarAnimacion();
 }
 
 Seleccion::~Seleccion()
@@ -28,5 +35,11 @@ void Seleccion::on_regresar_clicked()
 {
     emit regresarMenu();
     this->close();
+}
+
+
+void Seleccion::on_btnKrilin_clicked()
+{
+    krilin->detenerAnimacion();
 }
 

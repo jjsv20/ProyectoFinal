@@ -26,7 +26,7 @@
     <string>Regresar</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label">
+  <widget class="QGraphicsView" name="graphicsView">
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -35,18 +35,24 @@
      <height>720</height>
     </rect>
    </property>
-   <property name="text">
-    <string/>
+  </widget>
+  <widget class="QPushButton" name="btnKrilin">
+   <property name="geometry">
+    <rect>
+     <x>790</x>
+     <y>590</y>
+     <width>83</width>
+     <height>29</height>
+    </rect>
    </property>
-   <property name="pixmap">
-    <pixmap resource="imagenes.qrc">:/imagenes/seleccion.png</pixmap>
+   <property name="text">
+    <string>KRILIN</string>
    </property>
   </widget>
-  <zorder>label</zorder>
+  <zorder>graphicsView</zorder>
   <zorder>regresar</zorder>
+  <zorder>btnKrilin</zorder>
  </widget>
- <resources>
-  <include location="imagenes.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

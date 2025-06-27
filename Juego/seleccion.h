@@ -1,13 +1,20 @@
 #ifndef SELECCION_H
 #define SELECCION_H
 
-#include <QDialog>
+#include <QWidget>
+#include <QPainter>
+//#include <QGraphicsScene>
+#include <QGraphicsItem>
+#include <QRectF>
+#include <QDebug>
+#include <QPushButton>
+#include "krilin.h"
 
 namespace Ui {
 class Seleccion;
 }
 
-class Seleccion : public QDialog
+class Seleccion : public QWidget
 {
     Q_OBJECT
 
@@ -21,9 +28,13 @@ signals:
 private slots:
     void on_regresar_clicked();
 
+    void on_btnKrilin_clicked();
+
 private:
     Ui::Seleccion *ui;
-    //Seleccion *ventanaSeleccion;
+    QGraphicsScene *seleccion;
+    Krilin *krilin;
+    QGraphicsPixmapItem *fondoItem;
 };
 
 #endif // SELECCION_H

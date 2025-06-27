@@ -21,7 +21,8 @@ void Widget::on_salir_clicked()
 
 void Widget::on_jugar_clicked()
 {
-    ventanaSeleccion = new Seleccion(this);
+    //qDebug() << "Botón Jugar presionado";
+    ventanaSeleccion = new Seleccion();
     connect(ventanaSeleccion, &Seleccion::regresarMenu, this, &Widget::show);
     ventanaSeleccion->setAttribute(Qt::WA_DeleteOnClose);
     ventanaSeleccion->show();

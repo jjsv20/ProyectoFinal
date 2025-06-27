@@ -2,6 +2,7 @@
 #define WIDGET_H
 
 #include <QWidget>
+#include <QDebug>
 #include "seleccion.h"
 
 QT_BEGIN_NAMESPACE

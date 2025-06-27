@@ -1,4 +1,4 @@
-QT       += core gui multimedia multimediawidgets
+QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -9,11 +9,15 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    goku.cpp \
+    krilin.cpp \
     main.cpp \
     seleccion.cpp \
     widget.cpp
 
 HEADERS += \
+    goku.h \
+    krilin.h \
     seleccion.h \
     widget.h
 
