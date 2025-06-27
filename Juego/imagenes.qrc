@@ -4,5 +4,7 @@
         <file>imagenes/music.mp3</file>
         <file>imagenes/seleccion.png</file>
         <file>imagenes/krilinSeleccion.png</file>
+        <file>imagenes/Goku.png</file>
+        <file>imagenes/gokuSeleccion.png</file>
     </qresource>
 </RCC>

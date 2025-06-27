@@ -9,6 +9,7 @@
 #include <QDebug>
 #include <QPushButton>
 #include "krilin.h"
+#include "goku.h"
 
 namespace Ui {
 class Seleccion;
@@ -30,10 +31,13 @@ private slots:
 
     void on_btnKrilin_clicked();
 
+    void on_bthGoku_clicked();
+
 private:
     Ui::Seleccion *ui;
     QGraphicsScene *seleccion;
     Krilin *krilin;
+    Goku *goku;
     QGraphicsPixmapItem *fondoItem;
 };
 

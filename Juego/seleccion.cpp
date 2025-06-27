@@ -24,6 +24,11 @@ Seleccion::Seleccion(QWidget *parent)
     seleccion->addItem(krilin);
     krilin->setScale(6.0);
     krilin->iniciarAnimacion();
+
+    goku = new Goku();
+    seleccion->addItem(goku);
+    goku->setScale(5.5);
+    goku->iniciarAnimacion();
 }
 
 Seleccion::~Seleccion()
@@ -40,6 +45,14 @@ void Seleccion::on_regresar_clicked()
 
 void Seleccion::on_btnKrilin_clicked()
 {
+    krilin->detenerAnimacion();
+    goku->detenerAnimacion();
+}
+
+
+void Seleccion::on_bthGoku_clicked()
+{
+    goku->detenerAnimacion();
     krilin->detenerAnimacion();
 }
 
