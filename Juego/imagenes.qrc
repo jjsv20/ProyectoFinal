@@ -3,8 +3,10 @@
         <file>imagenes/CAMINO AL TORNEO.png</file>
         <file>imagenes/music.mp3</file>
         <file>imagenes/seleccion.png</file>
-        <file>imagenes/krilinSeleccion.png</file>
         <file>imagenes/Goku.png</file>
         <file>imagenes/gokuSeleccion.png</file>
+        <file>imagenes/GokuDerecha.png</file>
+        <file>imagenes/isla.png</file>
+        <file>imagenes/movimientosKrilin.png</file>
     </qresource>
 </RCC>

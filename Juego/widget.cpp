@@ -24,6 +24,7 @@ void Widget::on_jugar_clicked()
     //qDebug() << "Botón Jugar presionado";
     ventanaSeleccion = new Seleccion();
     connect(ventanaSeleccion, &Seleccion::regresarMenu, this, &Widget::show);
+    connect(ventanaSeleccion, &Seleccion::personajeSeleccionado, this, &Widget::iniciarEntrenamiento);
     ventanaSeleccion->setAttribute(Qt::WA_DeleteOnClose);
     ventanaSeleccion->show();
     this->hide(); // Oculta el menú
@@ -33,5 +34,11 @@ void Widget::on_jugar_clicked()
 void Widget::on_creditos_clicked()
 {
     close();
+}
+
+void Widget::iniciarEntrenamiento(QString personaje)
+{
+    entrenamiento = new Entrenamiento(personaje);
+    entrenamiento->show();
 }
 

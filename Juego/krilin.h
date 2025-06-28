@@ -8,6 +8,9 @@
 #include <QPixmap>
 #include <QKeyEvent>
 #include <QDebug>
+#include <QBitmap>
+#include <QPainter>
+#include <QSet>
 
 class Krilin : public QObject, public QGraphicsPixmapItem
 {
@@ -16,18 +19,35 @@ public:
     explicit Krilin(QObject *parent = nullptr);
     void iniciarAnimacion();
     void detenerAnimacion();
+    void volverASeleccion();
+
+    QRectF boundingRect() const override;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
 public slots:
-    void animar();
+    void animarDerecha();
+    void actualizar();
+
+protected:
+    void keyReleaseEvent(QKeyEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
 
 signals:
 private:
+    QTimer* controlTeclas;
+    QSet<int> teclasPresionadas;
     QTimer *seleccion;
-    QPixmap *krilinSeleccion, *fondo;
-    int cuadroActual;
-    int ancho;
-    int alto;
-    int totalCuadros;
+    QPixmap *pixmap, *fondo;
+    QGraphicsPixmapItem *krilinSeleccion;
+    QTimer* caminar;
+    bool moviendoDerecha;
+    int coordenadaX, coordenadaY;
+    int ancho, alto;
+    void moverDerecha();
+    void moverIzquierda();
+    void moverArriba();
+    int frameActual;
+    int totalFramesDerecha;
 };
 
 #endif // KRILIN_H

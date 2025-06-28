@@ -33,3 +33,4 @@ void Goku::animar()
     setPixmap(gokuSeleccion->copy(x, 0, ancho, alto));
     cuadroActual = (cuadroActual + 1) % totalCuadros;
 }
+

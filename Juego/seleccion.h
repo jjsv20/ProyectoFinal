@@ -22,9 +22,11 @@ class Seleccion : public QWidget
 public:
     explicit Seleccion(QWidget *parent = nullptr);
     ~Seleccion();
+    void actualizar();
 
 signals:
     void regresarMenu();
+    void personajeSeleccionado(QString nombre);
 
 private slots:
     void on_regresar_clicked();

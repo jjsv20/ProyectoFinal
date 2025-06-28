@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QDebug>
 #include "seleccion.h"
+#include "entrenamiento.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -26,8 +27,11 @@ private slots:
 
     void on_creditos_clicked();
 
+    void iniciarEntrenamiento(QString personaje);
+
 private:
     Ui::Widget *ui;
     Seleccion *ventanaSeleccion;
+    Entrenamiento *entrenamiento;
 };
 #endif // WIDGET_H
