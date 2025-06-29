@@ -10,6 +10,7 @@
 #include <QPushButton>
 #include "krilin.h"
 #include "goku.h"
+#include "widget.h"
 
 namespace Ui {
 class Seleccion;
@@ -41,6 +42,7 @@ private:
     Krilin *krilin;
     Goku *goku;
     QGraphicsPixmapItem *fondoItem;
+    //widget musicaFondo;
 };
 
 #endif // SELECCION_H

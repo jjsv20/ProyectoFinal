@@ -1,5 +1,6 @@
 #include "seleccion.h"
 #include "krilin.h"
+#include "widget.h"
 #include "ui_seleccion.h"
 
 Seleccion::Seleccion(QWidget *parent)
@@ -27,7 +28,7 @@ Seleccion::Seleccion(QWidget *parent)
 
     goku = new Goku();
     seleccion->addItem(goku);
-    goku->setScale(5.5);
+    goku->setScale(2.5);
     goku->iniciarAnimacion();
 }
 

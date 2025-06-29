@@ -11,6 +11,7 @@
 #include <QBitmap>
 #include <QPainter>
 #include <QSet>
+#include <QTransform>
 
 class Krilin : public QObject, public QGraphicsPixmapItem
 {
@@ -25,27 +26,32 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
 public slots:
-    void animarDerecha();
+    void animar();
     void actualizar();
+    void animarSalto();
 
 protected:
     void keyReleaseEvent(QKeyEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
-
 signals:
+    void moverFondoSignal(int dx);
 private:
-    QTimer* controlTeclas;
-    QSet<int> teclasPresionadas;
-    QTimer *seleccion;
-    QPixmap *pixmap, *fondo;
-    QGraphicsPixmapItem *krilinSeleccion;
-    QTimer* caminar;
-    bool moviendoDerecha;
-    int coordenadaX, coordenadaY;
-    int ancho, alto;
     void moverDerecha();
     void moverIzquierda();
     void moverArriba();
+    //QTimer* controlTeclas;
+    //QSet<int> teclasPresionadas;
+    QTimer *seleccion;
+    QPixmap *pixmap, *fondo, *frame, frameIzquierda;
+    QGraphicsPixmapItem *krilinSeleccion;
+    QTimer *caminar, *saltar;
+
+    bool moviendoDerecha, moviendoIzquierda, saltando;
+    int coordenadaX, coordenadaY;
+    int ancho, alto;
+
+    int sueloY, velocidadY, velocidadX, gravedad;
+
     int frameActual;
     int totalFramesDerecha;
 };

@@ -2,10 +2,14 @@
 #define WIDGET_H
 
 #include <QWidget>
-#include <QDebug>
 #include "seleccion.h"
 #include "entrenamiento.h"
+#include <QMediaPlayer>
+#include <QUrl>
+#include <QAudioOutput>
+#include <QDebug>
 
+class Seleccion;
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class Widget;
@@ -33,5 +37,7 @@ private:
     Ui::Widget *ui;
     Seleccion *ventanaSeleccion;
     Entrenamiento *entrenamiento;
+    QMediaPlayer *musicaFondo;
+    QAudioOutput *volumen;
 };
 #endif // WIDGET_H

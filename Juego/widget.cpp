@@ -6,6 +6,13 @@ Widget::Widget(QWidget *parent)
     , ui(new Ui::Widget)
 {
     ui->setupUi(this);
+    musicaFondo = new QMediaPlayer(this);
+    musicaFondo->setSource(QUrl("qrc:/musica/music.mp3"));
+    volumen = new QAudioOutput(this);
+    volumen->setVolume(0.4);
+    musicaFondo->setAudioOutput(volumen);
+    musicaFondo->setLoops(QMediaPlayer::Infinite);
+    musicaFondo->play();
 }
 
 Widget::~Widget()

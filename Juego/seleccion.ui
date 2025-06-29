@@ -52,8 +52,8 @@
   <widget class="QPushButton" name="bthGoku">
    <property name="geometry">
     <rect>
-     <x>200</x>
-     <y>590</y>
+     <x>190</x>
+     <y>620</y>
      <width>83</width>
      <height>29</height>
     </rect>

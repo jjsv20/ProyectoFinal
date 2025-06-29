@@ -24,11 +24,14 @@ private slots:
     void on_pausa_clicked();
     void on_reanudar_clicked();
     void on_salir_clicked();
-
+public slots:
+    void moverFondo(int dx);
 private:
     Ui::Entrenamiento *ui;
     QGraphicsScene *escenaEntrenamiento;
-    QGraphicsPixmapItem *fondoE;
+    QGraphicsPixmapItem *fondoE, *fondoEE;
+    int widthFondo;
+    int fondoMinX;
     Goku *goku;
     Krilin *krilin;
     QString personaje;
