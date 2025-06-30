@@ -1,27 +1,24 @@
 #ifndef GOKU_H
 #define GOKU_H
 
-#include <QObject>
-#include <QGraphicsItem>
-#include <QGraphicsScene>
+#include "personaje.h"
 #include <QTimer>
 #include <QPixmap>
 #include <QKeyEvent>
 #include <QDebug>
-#include <QBitmap>
 #include <QPainter>
 #include <piedras.h>
 #include <objetos.h>
 
-class Goku : public QObject, public QGraphicsPixmapItem
+class Goku : public Personaje
 {
     Q_OBJECT
 public:
     explicit Goku(QObject *parent = nullptr);
-    void iniciarAnimacion();
-    void detenerAnimacion();
-    void volverASeleccion();
-    void setPuntos(QGraphicsTextItem *texto);
+    void iniciarAnimacion() override;
+    void detenerAnimacion() override;
+    void perderVida() override;
+    void reiniciar() override;
 
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
@@ -30,35 +27,42 @@ public slots:
     void animar();
     void animarSalto();
     void actualizar();
+    void volverASeleccion();
     void colisionPiedras();
     void colisionRocas();
+    void desactivarTimers() override;
+    void reanudarAnimacion() override;
+    void setPausa(bool estado) { enPausa = estado; }
 
-signals:
+/*/signals:
     void moverFondoSignal(int dx);
+    void reiniciarPartida();
+    void finalPartida();
+    void partidaCompletada();/*/
 
 protected:
     void keyReleaseEvent(QKeyEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
 
-signals:
 private:
     void moverDerecha();
     void moverIzquierda();
     void moverArriba();
-    QTimer *seleccion, *saltar, *timerColision, *timer;
+
+    QTimer *seleccion, *saltar, *timerColision, *caminar;
     QPixmap *pixmap;
     QGraphicsPixmapItem *gokuSeleccion;
-    QTimer* caminar;
-    int contadorPiedras = 0;
-    QGraphicsTextItem *puntos;
 
-    bool moviendoDerecha, moviendoIzquierda, saltando;
+    bool moviendoDerecha;
+    bool moviendoIzquierda;
+    bool saltando;
+
     int coordenadaX, coordenadaY;
     int ancho, alto;
-
+    bool nivelCompletado;
     int sueloY, velocidadY, velocidadX, gravedad;
 
-    int frameActual;
+    int frameActual = 0;
     int totalFramesDerecha;
 };
 

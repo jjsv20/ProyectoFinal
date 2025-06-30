@@ -11,11 +11,15 @@ class Piedras : public QObject, public QGraphicsPixmapItem
 public:
     explicit Piedras(QObject *parent = nullptr);
 
+    void detener();
+    void reanudar();
+
 signals:
     void eliminarLista(Piedras *piedras);
 
 public slots:
     void moverPiedra();
+
 
 private:
     QTimer *timer;

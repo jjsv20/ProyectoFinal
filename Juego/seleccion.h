@@ -3,13 +3,11 @@
 
 #include <QWidget>
 #include <QPainter>
-//#include <QGraphicsScene>
 #include <QGraphicsItem>
 #include <QRectF>
 #include <QDebug>
 #include <QPushButton>
-#include "krilin.h"
-#include "goku.h"
+#include "personaje.h"
 #include "widget.h"
 
 namespace Ui {
@@ -39,10 +37,9 @@ private slots:
 private:
     Ui::Seleccion *ui;
     QGraphicsScene *seleccion;
-    Krilin *krilin;
-    Goku *goku;
+    Personaje *krilin;
+    Personaje *goku;
     QGraphicsPixmapItem *fondoItem;
-    //widget musicaFondo;
 };
 
 #endif // SELECCION_H

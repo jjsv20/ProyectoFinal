@@ -11,6 +11,20 @@ Piedras::Piedras(QObject *parent)
     timer->start(20);
 }
 
+void Piedras::detener()
+{
+    if (timer && timer->isActive()) {
+        timer->stop();
+    }
+}
+
+void Piedras::reanudar()
+{
+    if (timer && !timer->isActive()) {
+        timer->start(20);
+    }
+}
+
 void Piedras::moverPiedra()
 {
     int newX = x() - 5;

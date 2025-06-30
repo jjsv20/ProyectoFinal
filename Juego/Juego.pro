@@ -14,6 +14,7 @@ SOURCES += \
     krilin.cpp \
     main.cpp \
     objetos.cpp \
+    personaje.cpp \
     piedras.cpp \
     seleccion.cpp \
     widget.cpp
@@ -23,6 +24,7 @@ HEADERS += \
     goku.h \
     krilin.h \
     objetos.h \
+    personaje.h \
     piedras.h \
     seleccion.h \
     widget.h

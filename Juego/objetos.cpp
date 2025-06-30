@@ -11,6 +11,22 @@ Objetos::Objetos(QObject *parent)
     timer->start(20);
 }
 
+void Objetos::detener()
+{
+    if (timer && timer->isActive()) {
+        timer->stop();
+    }
+}
+
+void Objetos::reanudar()
+{
+    if (timer && !timer->isActive()) {
+        timer->start(20);
+    }
+}
+
+
+
 void Objetos::moverRoca()
 {
     int newX = x() - 5;

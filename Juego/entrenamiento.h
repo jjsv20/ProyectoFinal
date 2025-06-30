@@ -6,8 +6,7 @@
 #include <QGraphicsView>
 #include <QGraphicsItem>
 #include <QGraphicsRectItem>
-#include "goku.h"
-#include "krilin.h"
+#include "personaje.h"
 #include "piedras.h"
 #include "objetos.h"
 
@@ -20,24 +19,29 @@ class Entrenamiento : public QWidget
     Q_OBJECT
 
 public:
-    explicit Entrenamiento(QString personajeSeleccionado, QWidget *parent = nullptr);
+    explicit Entrenamiento(QString personajeSeleccionado, int vidasIniciales, int piedrasIniciales, QWidget *parent = nullptr);
     ~Entrenamiento();
 
 private slots:
     void on_pausa_clicked();
-    void on_reanudar_clicked();
-    void on_salir_clicked();
 public slots:
     void moverFondo(int dx);
     void crearPiedras();
     void crearRocas();
+    void pantallaDerrota();
+    void pantallaVictoria();
+    void detenerTimersGlobales();
+    void reanudarTimersGlobales();
+signals:
+    void volverASeleccionar();
+
 private:
     Ui::Entrenamiento *ui;
     QGraphicsScene *escenaEntrenamiento;
 
     QGraphicsPixmapItem *fondoE, *fondoEE;
     QGraphicsRectItem *suelo;
-    QGraphicsTextItem *texto;
+    QGraphicsTextItem *texto, *vidasT;
 
     QTimer *timerPiedras;
     int nPiedras;
@@ -50,9 +54,9 @@ private:
     int widthFondo;
     int fondoMinX;
 
-    Goku *goku;
-    Krilin *krilin;
+    Personaje *personajeActual;
     QString personaje;
+    //Entrenamiento *entrenamiento2;
     //Objetos *piedra;
 };
 
