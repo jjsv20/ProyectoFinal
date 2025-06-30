@@ -1,6 +1,9 @@
 #include "entrenamiento.h"
 #include "ui_entrenamiento.h"
 #include "krilin.h"
+#include "objetos.h"
+#include <QRandomGenerator>
+#include <QMessageBox>
 
 Entrenamiento::Entrenamiento(QString personajeSeleccionado, QWidget *parent)
     : QWidget(parent)
@@ -14,8 +17,8 @@ Entrenamiento::Entrenamiento(QString personajeSeleccionado, QWidget *parent)
     ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    QPixmap fondo(":/imagenes/isla.png");
-    //QPixmap fondo(":/imagenes/fondoN1.png");
+    //QPixmap fondo(":/imagenes/isla.png");
+    QPixmap fondo(":/imagenes/fondoN1.png");
     widthFondo = fondo.width();
     fondoE = new QGraphicsPixmapItem(fondo);
     fondoE->setZValue(-1);
@@ -26,10 +29,15 @@ Entrenamiento::Entrenamiento(QString personajeSeleccionado, QWidget *parent)
     fondoEE->setZValue(-1);
     escenaEntrenamiento->addItem(fondoEE);
 
+    suelo = new QGraphicsRectItem(0, 592, 1080, 40);
+    suelo->setBrush(Qt::NoBrush);
+    suelo->setPen(Qt::NoPen);
+    escenaEntrenamiento->addItem(suelo);
+
     if(personaje == "Goku"){
         goku = new Goku();
         goku->setPos(100, 500);
-        goku->setScale(1.0);
+        goku->setScale(1.5);
         goku->setFlag(QGraphicsItem::ItemIsFocusable);
         goku->setFocus();
         escenaEntrenamiento->addItem(goku);
@@ -45,6 +53,23 @@ Entrenamiento::Entrenamiento(QString personajeSeleccionado, QWidget *parent)
         krilin->iniciarAnimacion();
         connect(krilin, &Krilin::moverFondoSignal, this, &Entrenamiento::moverFondo);
     }
+
+    nPiedras = 0;
+    timerPiedras = new QTimer(this);
+    connect(timerPiedras, &QTimer::timeout, this, &Entrenamiento::crearPiedras);
+    timerPiedras->start(5000);
+
+    nRocas = 0;
+    timerRocas = new QTimer(this);
+    connect(timerRocas, &QTimer::timeout, this, &Entrenamiento::crearRocas);
+    timerRocas->start(2000);
+
+    texto = new QGraphicsTextItem("x 0");
+    texto->setDefaultTextColor(Qt::yellow);
+    texto->setFont(QFont("Arial", 24));
+    texto->setPos(30, 20);
+    escenaEntrenamiento->addItem(texto);
+    goku->setPuntos(texto);
 }
 
 Entrenamiento::~Entrenamiento()
@@ -54,7 +79,8 @@ Entrenamiento::~Entrenamiento()
 
 void Entrenamiento::on_pausa_clicked()
 {
-
+    goku->detenerAnimacion();
+    krilin->detenerAnimacion();
 }
 
 void Entrenamiento::on_reanudar_clicked()
@@ -79,3 +105,31 @@ void Entrenamiento::moverFondo(int dx)
         fondoEE->setX(fondoE->x() + widthFondo);
     }
 }
+
+void Entrenamiento::crearPiedras()
+{
+    if(piedras.count() < 10){
+        Piedras *p = new Piedras();
+        escenaEntrenamiento->addItem(p);
+        piedras.append(p);
+
+        connect(p, &Piedras::eliminarLista, this, [=](Piedras *piedra){
+            piedras.removeOne(piedra);
+        });
+    }
+}
+
+void Entrenamiento::crearRocas()
+{
+    if(rocas.count() < 4){
+        Objetos *r = new Objetos(this);
+        escenaEntrenamiento->addItem(r);
+        rocas.append(r);
+
+        connect(r, &Objetos::eliminarRoca, this, [=](Objetos *roca){
+            rocas.removeOne(roca);
+        });
+    }
+}
+
+

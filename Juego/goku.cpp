@@ -27,10 +27,15 @@ Goku::Goku(QObject *parent)
     moviendoIzquierda = false;
     saltando = false;
 
-    gravedad = 9;
+    gravedad = 5;
     velocidadY = 0;
     velocidadX = 0;
-    sueloY = 380;
+    //sueloY = 380;
+
+    timerColision = new QTimer(this);
+    connect(timerColision, &QTimer::timeout, this, &Goku::colisionPiedras);
+    connect(timerColision, &QTimer::timeout, this, &Goku::colisionRocas);
+    timerColision->start(50);
 
 }
 
@@ -50,8 +55,8 @@ void Goku::animar()
         frameActual = (frameActual + 1) % totalFramesDerecha;
         coordenadaX = frameActual * ancho;
         setPixmap(pixmap->copy(coordenadaX, coordenadaY, ancho, alto));
-        setPos(x() + 10, y());
-        emit moverFondoSignal(10);
+        //setPos(x() + 10, y());
+        emit moverFondoSignal(20);
     } else if (moviendoIzquierda) {
         coordenadaY = 200;
         frameActual = (frameActual + 1) % 8;
@@ -72,13 +77,18 @@ void Goku::animarSalto()
     setX(x() + velocidadX);
     setY(y() + velocidadY);
     velocidadY += gravedad;
-    if (y() >= sueloY) {
-        setY(sueloY);
-        velocidadY = 0;
-        saltando = false;
-        saltar->stop();
-        velocidadX = 0;
-        volverASeleccion();
+    if (velocidadY > 0) {
+        for(QGraphicsItem *item : collidingItems()) {
+            if (dynamic_cast<QGraphicsRectItem*>(item)) {
+                qDebug() << "Tocando suelo";
+                velocidadY = 0;
+                velocidadX = 0;
+                saltando = false;
+                saltar->stop();
+                volverASeleccion();
+                return;
+            }
+        }
     }
 }
 
@@ -89,6 +99,41 @@ void Goku::actualizar()
         coordenadaX = 0;
     }
     setPixmap(pixmap->copy(coordenadaX, coordenadaY, ancho, alto));
+}
+
+void Goku::setPuntos(QGraphicsTextItem* texto) {
+    puntos = texto;
+}
+
+void Goku::colisionPiedras()
+{
+    const auto items = scene()->items();
+    for(auto i : items){
+        if(Piedras *p = dynamic_cast<Piedras*>(i)){
+            if(this->collidesWithItem(p)){
+                qDebug() << "Colision piedra";
+                scene()->removeItem(p);
+                contadorPiedras += 1;
+                if(puntos) {
+                    puntos->setPlainText("x " + QString::number(contadorPiedras));
+                }
+            }
+        }
+    }
+}
+
+void Goku::colisionRocas()
+{
+    const auto items = scene()->items();
+    for(auto i : items){
+        if(Objetos *p = dynamic_cast<Objetos*>(i)){
+            if(this->collidesWithItem(p)){
+                qDebug() << "Colision roca";
+                //scene()->removeItem(p);
+                //contadorPiedras += 1;
+            }
+        }
+    }
 }
 
 void Goku::keyReleaseEvent(QKeyEvent *event)
@@ -109,7 +154,7 @@ void Goku::keyPressEvent(QKeyEvent *event)
         moviendoDerecha = true;
         moviendoIzquierda = false;
         if (saltando) {
-            velocidadX = 10;
+            velocidadX = 5;
         }
         caminar->start(40);
     }else if(event->key() == Qt::Key_Left && !event->isAutoRepeat()){
@@ -119,17 +164,19 @@ void Goku::keyPressEvent(QKeyEvent *event)
             velocidadX = -10;
         }
         caminar->start(40);
-    }else if (event->key() == Qt::Key_Space  && !event->isAutoRepeat()) {
+    }else if (event->key() == Qt::Key_Space && !event->isAutoRepeat()) {
         if(!saltando){
             if (moviendoDerecha){
                 velocidadX = 10;
             }else if (moviendoIzquierda){
                 velocidadX = -10;
-            }else velocidadX = 0;{
-                caminar->stop();
-                velocidadY = -40;
-                saltar->start(100);
+            }else {
+                velocidadX = 0;
             }
+            caminar->stop();
+            velocidadY = -40;
+            saltando = true;
+            saltar->start(30);
         }
     }
 }

@@ -6,5 +6,7 @@
         <file>imagenes/fondoN1.png</file>
         <file>imagenes/movimientosGoku.png</file>
         <file>imagenes/seleccion.png</file>
+        <file>imagenes/piedra.png</file>
+        <file>imagenes/roca.png</file>
     </qresource>
 </RCC>

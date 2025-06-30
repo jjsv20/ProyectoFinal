@@ -10,6 +10,8 @@
 #include <QDebug>
 #include <QBitmap>
 #include <QPainter>
+#include <piedras.h>
+#include <objetos.h>
 
 class Goku : public QObject, public QGraphicsPixmapItem
 {
@@ -19,6 +21,7 @@ public:
     void iniciarAnimacion();
     void detenerAnimacion();
     void volverASeleccion();
+    void setPuntos(QGraphicsTextItem *texto);
 
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
@@ -27,6 +30,8 @@ public slots:
     void animar();
     void animarSalto();
     void actualizar();
+    void colisionPiedras();
+    void colisionRocas();
 
 signals:
     void moverFondoSignal(int dx);
@@ -40,10 +45,12 @@ private:
     void moverDerecha();
     void moverIzquierda();
     void moverArriba();
-    QTimer *seleccion, *saltar;
+    QTimer *seleccion, *saltar, *timerColision, *timer;
     QPixmap *pixmap;
     QGraphicsPixmapItem *gokuSeleccion;
     QTimer* caminar;
+    int contadorPiedras = 0;
+    QGraphicsTextItem *puntos;
 
     bool moviendoDerecha, moviendoIzquierda, saltando;
     int coordenadaX, coordenadaY;

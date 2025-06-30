@@ -13,6 +13,8 @@ SOURCES += \
     goku.cpp \
     krilin.cpp \
     main.cpp \
+    objetos.cpp \
+    piedras.cpp \
     seleccion.cpp \
     widget.cpp
 
@@ -20,6 +22,8 @@ HEADERS += \
     entrenamiento.h \
     goku.h \
     krilin.h \
+    objetos.h \
+    piedras.h \
     seleccion.h \
     widget.h
 
