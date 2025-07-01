@@ -10,7 +10,7 @@ Goku::Goku(QObject *parent)
 
     pixmap = new QPixmap(":/imagenes/movimientosGoku.png");
     setPixmap(pixmap->copy(coordenadaX, coordenadaY, ancho, alto));
-    setPos(150, 380);
+    setPos(100, 380);
 
     frameActual = 0;
     totalFramesDerecha = 6;
@@ -77,18 +77,17 @@ void Goku::animarSalto()
     setX(x() + velocidadX);
     setY(y() + velocidadY);
     velocidadY += gravedad;
-    if (velocidadY > 0) {
-        for(QGraphicsItem *item : collidingItems()) {
-            if (dynamic_cast<QGraphicsRectItem*>(item)) {
-                qDebug() << "Tocando suelo";
-                velocidadY = 0;
-                velocidadX = 0;
-                saltando = false;
-                saltar->stop();
-                volverASeleccion();
-                return;
-            }
-        }
+    const qreal alturaSuelo = 592 - boundingRect().height();  // donde aterriza
+
+    if (y() >= alturaSuelo) {
+        setY(alturaSuelo);
+        velocidadY = 0;
+        velocidadX = 0;
+        saltando = false;
+        saltar->stop();
+        volverASeleccion();
+        qDebug() << "Aterrizó en el suelo";
+        return;
     }
 }
 
@@ -110,14 +109,17 @@ void Goku::colisionPiedras()
                 qDebug() << "Colision piedra";
                 scene()->removeItem(p);
                 contadorPiedras += 1;
+                qDebug() << "Piedras recolectadas:" << contadorPiedras;
                 if(puntos) {
                     puntos->setPlainText("x " + QString::number(contadorPiedras));
                 }
             }
-            if (contadorPiedras >= 4 && !nivelCompletado) {
-                getNivelCompletado();
+            if (contadorPiedras >= 4 && !getNivelCompletado()) {
+                //setNivelCompletado(true);
                 QTimer::singleShot(1500, this, [=]() {
-                    partidaCompletada();
+                    qDebug() << "Emit partidaCompletada por recolectar piedras";
+                    qDebug() << "Nivel completado:" << getNivelCompletado();
+                    emit partidaCompletada();
                 });
             }
         }
@@ -132,6 +134,7 @@ void Goku::colisionRocas()
         if(Objetos *p = dynamic_cast<Objetos*>(i)){
             if(this->collidesWithItem(p)){
                 qDebug() << "Colision roca";
+                moveBy(-20, 0);
                 perderVida();
                 break;
             }

@@ -9,6 +9,7 @@
 #include <QPushButton>
 #include "personaje.h"
 #include "widget.h"
+#include "krilin.h"
 
 namespace Ui {
 class Seleccion;
@@ -37,8 +38,7 @@ private slots:
 private:
     Ui::Seleccion *ui;
     QGraphicsScene *seleccion;
-    Personaje *krilin;
-    Personaje *goku;
+    Personaje *krilin, *goku;
     QGraphicsPixmapItem *fondoItem;
 };
 

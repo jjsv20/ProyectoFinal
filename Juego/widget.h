@@ -31,6 +31,7 @@ private slots:
 
     void on_creditos_clicked();
 
+    //void iniciarEntrenamiento(QString personaje);
     void iniciarEntrenamiento(QString personaje);
 
 private:

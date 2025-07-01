@@ -19,7 +19,7 @@ class Entrenamiento : public QWidget
     Q_OBJECT
 
 public:
-    explicit Entrenamiento(QString personajeSeleccionado, int vidasIniciales, int piedrasIniciales, QWidget *parent = nullptr);
+    explicit Entrenamiento(QString personajeSeleccionado, int vidasIniciales, int piedrasIniciales, int nivel, int derrotas, QWidget *parent = nullptr);
     ~Entrenamiento();
 
 private slots:
@@ -32,15 +32,16 @@ public slots:
     void pantallaVictoria();
     void detenerTimersGlobales();
     void reanudarTimersGlobales();
+    void reiniciarPartida(int vidasr, int piedrasr);
+
 signals:
-    void volverASeleccionar();
+    void volverSeleccionar();
 
 private:
     Ui::Entrenamiento *ui;
     QGraphicsScene *escenaEntrenamiento;
 
     QGraphicsPixmapItem *fondoE, *fondoEE;
-    QGraphicsRectItem *suelo;
     QGraphicsTextItem *texto, *vidasT;
 
     QTimer *timerPiedras;
@@ -58,6 +59,8 @@ private:
     QString personaje;
     //Entrenamiento *entrenamiento2;
     //Objetos *piedra;
+    int nivelActual = 1;
+    int derrotasNivel = 0;
 };
 
 #endif // ENTRENAMIENTO_H

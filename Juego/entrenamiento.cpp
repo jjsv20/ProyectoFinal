@@ -6,10 +6,12 @@
 #include <QRandomGenerator>
 #include <QMessageBox>
 
-Entrenamiento::Entrenamiento(QString personajeSeleccionado, int vidasIniciales, int piedrasIniciales, QWidget *parent)
+Entrenamiento::Entrenamiento(QString personajeSeleccionado, int vidasIniciales, int piedrasIniciales, int nivel, int derrotas, QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Entrenamiento)
     , personaje(personajeSeleccionado)
+    , nivelActual(nivel)
+    , derrotasNivel(derrotas)
 {
     ui->setupUi(this);
 
@@ -20,11 +22,12 @@ Entrenamiento::Entrenamiento(QString personajeSeleccionado, int vidasIniciales, 
 
     //QPixmap fondo(":/imagenes/isla.png");
     //QPixmap fondo(":/imagenes/fondoN1.png");
+
     QPixmap fondo;
-    if (piedrasIniciales >= 4) {
-        fondo.load(":/imagenes/fondoN1.png");
-    } else {
+    if (nivelActual == 1) {
         fondo.load(":/imagenes/isla.png");
+    } else if (nivelActual >= 2) {
+        fondo.load(":/imagenes/fondoN1.png");
     }
     widthFondo = fondo.width();
     fondoE = new QGraphicsPixmapItem(fondo);
@@ -36,27 +39,26 @@ Entrenamiento::Entrenamiento(QString personajeSeleccionado, int vidasIniciales, 
     fondoEE->setZValue(-1);
     escenaEntrenamiento->addItem(fondoEE);
 
-    suelo = new QGraphicsRectItem(0, 592, 1080, 40);
-    suelo->setBrush(Qt::NoBrush);
-    suelo->setPen(Qt::NoPen);
-    escenaEntrenamiento->addItem(suelo);
-
     if(personaje == "Goku"){
         personajeActual = new Goku();
         personajeActual->setScale(1.5);
     } else if(personaje == "Krilin"){
-        qDebug() << "jfhf";
-        //personajeActual = new Krilin();
-        //personajeActual->setScale(1.0);
+        personajeActual = new Krilin();
+        personajeActual->setScale(1.0);
     }
 
-    personajeActual->setPos(100, 500);
+    connect(personajeActual, &Personaje::finalPartida, this, &Entrenamiento::pantallaDerrota);
+    connect(personajeActual, &Personaje::partidaCompletada, this, &Entrenamiento::pantallaVictoria);
+    personajeActual->setPos(100, 492);
     personajeActual->setFlag(QGraphicsItem::ItemIsFocusable);
     personajeActual->setFocus();
     personajeActual->setContadorVidas(vidasIniciales);
-    personajeActual->setContadorPiedras(piedrasIniciales);
+    personajeActual->setContadorPiedras(0);
     escenaEntrenamiento->addItem(personajeActual);
     personajeActual->iniciarAnimacion();
+
+    personajeActual->setNivelCompletado(false);
+    personajeActual->setEstaMuerto(false);
 
     connect(personajeActual, &Personaje::moverFondoSignal, this, &Entrenamiento::moverFondo);
 
@@ -83,14 +85,20 @@ Entrenamiento::Entrenamiento(QString personajeSeleccionado, int vidasIniciales, 
     vidasT->setPos(50, 50);
     escenaEntrenamiento->addItem(vidasT);
     personajeActual->setVidas(vidasT);
-
-    connect(personajeActual, &Personaje::finalPartida, this, &Entrenamiento::pantallaDerrota);
-    connect(personajeActual, &Personaje::partidaCompletada, this, &Entrenamiento::pantallaVictoria);
-
 }
 
 Entrenamiento::~Entrenamiento()
 {
+    if (timerPiedras) timerPiedras->stop();
+    if (timerRocas) timerRocas->stop();
+
+    for (Piedras* p : piedras) {
+        if (p) escenaEntrenamiento->removeItem(p);
+    }
+
+    for (Objetos* r : rocas) {
+        if (r) escenaEntrenamiento->removeItem(r);
+    }
     delete ui;
 }
 
@@ -179,42 +187,7 @@ void Entrenamiento::crearRocas()
 }
 
 void Entrenamiento::pantallaDerrota() {
-    detenerTimersGlobales();
-
-    QGraphicsRectItem* fondo = new QGraphicsRectItem(0, 0, 1080, 720);
-    fondo->setBrush(QColor(0, 0, 0, 180));
-    fondo->setZValue(10);
-    escenaEntrenamiento->addItem(fondo);
-
-    QGraphicsTextItem* mensaje = new QGraphicsTextItem("¡Game Over!");
-    mensaje->setDefaultTextColor(Qt::white);
-    mensaje->setFont(QFont("Arial", 28, QFont::Bold));
-    mensaje->setPos(400, 250);
-    mensaje->setZValue(11);
-    escenaEntrenamiento->addItem(mensaje);
-    ui->pausa->hide();
-
-    QPushButton* botonReiniciar = new QPushButton("Volver a jugar", this);
-    botonReiniciar->setGeometry(450, 300, 180, 40);
-    botonReiniciar->raise();
-    botonReiniciar->show();
-
-    QPushButton* botonMenu = new QPushButton("Volver al Menú", this);
-    botonMenu->setGeometry(450, 360, 180, 40);
-    botonMenu->raise();
-    botonMenu->show();
-
-    connect(botonReiniciar, &QPushButton::clicked, this, [=]() {
-        emit volverASeleccionar();
-        this->close();
-    });
-    connect(botonMenu, &QPushButton::clicked, this, [=]() {
-        this->close();
-        //emit volverAMenu();
-    });
-}
-
-void Entrenamiento::pantallaVictoria() {
+    //personajeActual->setEstaMuerto(true);
     detenerTimersGlobales();
 
     QGraphicsRectItem* fondo = new QGraphicsRectItem(0, 0, 1080, 720);
@@ -222,45 +195,85 @@ void Entrenamiento::pantallaVictoria() {
     fondo->setZValue(10);
     escenaEntrenamiento->addItem(fondo);
 
-    QGraphicsTextItem* mensaje = new QGraphicsTextItem("¡Nivel completado!");
+    QGraphicsTextItem* mensaje = new QGraphicsTextItem("GAME OVER");
+    mensaje->setDefaultTextColor(Qt::white);
+    mensaje->setFont(QFont("Arial", 28, QFont::Bold));
+    mensaje->setPos(400, 250);
+    mensaje->setZValue(11);
+    escenaEntrenamiento->addItem(mensaje);
+    ui->pausa->hide();
+    QTimer::singleShot(2000, this, [=]() {
+        escenaEntrenamiento->removeItem(fondo);
+        escenaEntrenamiento->removeItem(mensaje);
+        delete fondo;
+        delete mensaje;
+        derrotasNivel++;
+        qDebug() << "Derrotas en nivel" << nivelActual << ":" << derrotasNivel;
+        if (derrotasNivel < 3 && (nivelActual == 1 || nivelActual == 2)) {
+            int vidasRestantes = 5;
+            int piedrasRestantes = 0;
+            reiniciarPartida(vidasRestantes, piedrasRestantes);
+        } else {
+            emit volverSeleccionar();
+            this->close();
+        }
+    });
+}
+
+void Entrenamiento::pantallaVictoria() {
+    if (personajeActual->getNivelCompletado()) return;
+    personajeActual->setNivelCompletado(true);
+
+    detenerTimersGlobales();
+
+    QGraphicsRectItem* fondo = new QGraphicsRectItem(0, 0, 1080, 720);
+    fondo->setBrush(Qt::black);
+    fondo->setZValue(10);
+    escenaEntrenamiento->addItem(fondo);
+
+    QGraphicsTextItem* mensaje = new QGraphicsTextItem("Nivel: " + QString::number(nivelActual) + " completado");
     mensaje->setDefaultTextColor(Qt::white);
     mensaje->setFont(QFont("Arial", 28, QFont::Bold));
     mensaje->setPos(350, 250);
     mensaje->setZValue(11);
     escenaEntrenamiento->addItem(mensaje);
 
-    QPushButton* botonReiniciar = new QPushButton("Volver a jugar", this);
-    botonReiniciar->setGeometry(450, 300, 180, 40);
-    botonReiniciar->raise();
-    botonReiniciar->show();
-
-    QPushButton* botonMenu = new QPushButton("Volver al Menú", this);
-    botonMenu->setGeometry(450, 360, 180, 40);
-    botonMenu->raise();
-    botonMenu->show();
-
-    QPushButton* botonNext = new QPushButton("Siguiente nivel", this);
-    botonNext->setGeometry(450, 420, 180, 40);
-    botonNext->raise();
-    botonNext->show();
-
-    connect(botonReiniciar, &QPushButton::clicked, this, [=]() {
-        emit volverASeleccionar();
-        this->close();
-    });
-    connect(botonMenu, &QPushButton::clicked, this, [=]() {
-        this->close();
-        //emit volverAMenu();
-    });
-    connect(botonNext, &QPushButton::clicked, this, [=]() {
-        int vidasRestantes = personajeActual->getContadorVidas();
-        int piedrasAcumuladas = personajeActual->getContadorPiedras();
-        Entrenamiento* siguienteNivel = new Entrenamiento(personaje, vidasRestantes, piedrasAcumuladas);
-        siguienteNivel->show();
-        this->close();
-    });
-
     ui->pausa->hide();
+
+    QTimer::singleShot(2000, this, [=]() {
+        escenaEntrenamiento->removeItem(fondo);
+        escenaEntrenamiento->removeItem(mensaje);
+        delete fondo;
+        delete mensaje;
+        int vidasRestantes = personajeActual->getContadorVidas();
+        //int piedrasRestantes = 0;
+        if (nivelActual < 2) {
+            qDebug() << "Nivel actual cargado:" << nivelActual + 1;
+            disconnect(personajeActual, nullptr, this, nullptr);
+            Entrenamiento* siguienteNivel = new Entrenamiento(personaje, vidasRestantes, 0, nivelActual + 1, 0);
+            siguienteNivel->show();
+            this->close();
+        } else {
+            QGraphicsRectItem* fondo = new QGraphicsRectItem(0, 0, 1080, 720);
+            fondo->setBrush(Qt::black);
+            fondo->setZValue(10);
+            escenaEntrenamiento->addItem(fondo);
+            QGraphicsTextItem* mensajeFinal = new QGraphicsTextItem("ENTRENAMIENTO COMPLETADO");
+            mensajeFinal->setDefaultTextColor(Qt::white);
+            mensajeFinal->setFont(QFont("Arial", 30, QFont::Bold));
+            mensajeFinal->setPos(250, 300);
+            mensajeFinal->setZValue(12);
+            escenaEntrenamiento->addItem(mensajeFinal);
+            qDebug() << "Pasas a combate";
+            QTimer::singleShot(3000, this, [=]() {
+                escenaEntrenamiento->removeItem(fondo);
+                escenaEntrenamiento->removeItem(mensajeFinal);
+                delete fondo;
+                delete mensajeFinal;
+                this->close();
+            });
+        }
+    });
 }
 
 void Entrenamiento::detenerTimersGlobales()
@@ -299,3 +312,72 @@ void Entrenamiento::reanudarTimersGlobales()
     }
 }
 
+void Entrenamiento::reiniciarPartida(int vidasr, int piedrasr)
+{
+    for (Piedras* p : piedras) {
+        disconnect(p, nullptr, this, nullptr);
+    }
+    for (Piedras* p : piedras) {
+        escenaEntrenamiento->removeItem(p);
+        p->deleteLater();
+    }
+    piedras.clear();
+
+    for (Objetos* r : rocas) {
+        disconnect(r, nullptr, this, nullptr);
+    }
+    for (Objetos* r : rocas) {
+        escenaEntrenamiento->removeItem(r);
+        r->deleteLater();
+    }
+    rocas.clear();
+
+    if (personajeActual) {
+        personajeActual->desactivarTimers();
+        disconnect(personajeActual, nullptr, this, nullptr);
+        escenaEntrenamiento->removeItem(personajeActual);
+        delete personajeActual;
+        personajeActual = nullptr;
+    }
+    if(personaje == "Goku"){
+        personajeActual = new Goku();
+        personajeActual->setScale(1.5);
+    } else if(personaje == "Krilin"){
+        personajeActual = new Krilin();
+        personajeActual->setScale(1.0);
+    }
+
+    personajeActual->setPos(100, 500);
+    personajeActual->setFlag(QGraphicsItem::ItemIsFocusable);
+    personajeActual->setFocus();
+    personajeActual->setContadorVidas(vidasr);       // Reinicia vidas
+    personajeActual->setContadorPiedras(piedrasr);     // Reinicia piedras
+    personajeActual->setNivelCompletado(false);
+    personajeActual->setEstaMuerto(false);
+    escenaEntrenamiento->addItem(personajeActual);
+
+    connect(personajeActual, &Personaje::moverFondoSignal, this, &Entrenamiento::moverFondo);
+    connect(personajeActual, &Personaje::finalPartida, this, &Entrenamiento::pantallaDerrota);
+    connect(personajeActual, &Personaje::partidaCompletada, this, &Entrenamiento::pantallaVictoria);
+
+    QPixmap fondo;
+    if (nivelActual == 1) {
+        fondo.load(":/imagenes/isla.png");
+    } else if (nivelActual == 2) {
+        fondo.load(":/imagenes/fondoN1.png");
+    }
+    widthFondo = fondo.width();
+    fondoE->setPixmap(fondo);
+    fondoEE->setPixmap(fondo);
+    fondoE->setX(0);
+    fondoEE->setX(widthFondo);
+    fondoE->setZValue(-1);
+    fondoEE->setZValue(-1);
+
+    if (vidasT) vidasT->setPlainText("Vidas: " + QString::number(vidasr));
+    if (texto)  texto->setPlainText("x 0");
+    personajeActual->setVidas(vidasT);
+    personajeActual->setPuntos(texto);
+
+    reanudarTimersGlobales();
+}

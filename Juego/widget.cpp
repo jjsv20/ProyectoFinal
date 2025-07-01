@@ -45,18 +45,8 @@ void Widget::on_creditos_clicked()
 
 void Widget::iniciarEntrenamiento(QString personaje)
 {
-    entrenamiento = new Entrenamiento(personaje,5,0);
-    connect(entrenamiento, &Entrenamiento::volverASeleccionar, this, [=]() {
-        entrenamiento->close();
-        entrenamiento->deleteLater();
-        entrenamiento = nullptr;
-        // Volver a la selección de personaje
-        ventanaSeleccion = new Seleccion();
-        connect(ventanaSeleccion, &Seleccion::regresarMenu, this, &Widget::show);
-        connect(ventanaSeleccion, &Seleccion::personajeSeleccionado, this, &Widget::iniciarEntrenamiento);
-        ventanaSeleccion->setAttribute(Qt::WA_DeleteOnClose);
-        ventanaSeleccion->show();
-    });
+    entrenamiento = new Entrenamiento(personaje,5,0, 1, 0);
+    connect(entrenamiento, &Entrenamiento::volverSeleccionar, this, &Widget::show);
     entrenamiento->setAttribute(Qt::WA_DeleteOnClose);
     entrenamiento->show();
 }

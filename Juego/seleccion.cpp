@@ -1,5 +1,4 @@
 #include "seleccion.h"
-#include "krilin.h"
 #include "widget.h"
 #include "ui_seleccion.h"
 
