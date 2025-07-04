@@ -25,18 +25,15 @@ public:
     ~Widget();
 
 private slots:
-    void on_salir_clicked();
-
-    void on_jugar_clicked();
-
-    void on_creditos_clicked();
-
-    //void iniciarEntrenamiento(QString personaje);
-    void iniciarEntrenamiento(QString personaje);
+    void on_botonJugar_clicked();
+    void on_botonSalir_clicked();
+    void iniciarEntrenamiento(QString personaje, int vidas, int nivel);
+    void mostrarSeleccion();
+    void mostrarMenu();
 
 private:
     Ui::Widget *ui;
-    Seleccion *ventanaSeleccion;
+    Seleccion *paginaSeleccion;
     Entrenamiento *entrenamiento;
     QMediaPlayer *musicaFondo;
     QAudioOutput *volumen;

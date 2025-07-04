@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Widget</string>
   </property>
-  <widget class="QLabel" name="label">
+  <widget class="QStackedWidget" name="stackedWidget">
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -22,53 +22,68 @@
      <height>720</height>
     </rect>
    </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="pixmap">
-    <pixmap resource="imagenes.qrc">:/imagenes/CAMINO AL TORNEO.png</pixmap>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="jugar">
-   <property name="geometry">
-    <rect>
-     <x>500</x>
-     <y>440</y>
-     <width>83</width>
-     <height>29</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Jugar</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="creditos">
-   <property name="geometry">
-    <rect>
-     <x>500</x>
-     <y>480</y>
-     <width>83</width>
-     <height>29</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Créditos</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="salir">
-   <property name="geometry">
-    <rect>
-     <x>500</x>
-     <y>520</y>
-     <width>83</width>
-     <height>29</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Salir</string>
-   </property>
+   <widget class="Seleccion" name="page"/>
+   <widget class="QWidget" name="paginaMenu">
+    <widget class="QLabel" name="label">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>1080</width>
+       <height>720</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="imagenes.qrc">:/imagenes/CAMINO AL TORNEO.png</pixmap>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="botonJugar">
+     <property name="geometry">
+      <rect>
+       <x>500</x>
+       <y>410</y>
+       <width>83</width>
+       <height>29</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Jugar</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="botonSalir">
+     <property name="geometry">
+      <rect>
+       <x>500</x>
+       <y>510</y>
+       <width>83</width>
+       <height>29</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Salir</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="Entrenamiento" name="paginaEntrenamiento"/>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Seleccion</class>
+   <extends>QWidget</extends>
+   <header>seleccion.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Entrenamiento</class>
+   <extends>QWidget</extends>
+   <header location="global">entrenamiento.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="imagenes.qrc"/>
  </resources>

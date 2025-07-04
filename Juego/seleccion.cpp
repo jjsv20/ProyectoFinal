@@ -16,7 +16,6 @@ Seleccion::Seleccion(QWidget *parent)
     fondoItem->setZValue(-1);
     seleccion->addItem(fondoItem);
 
-    ui->graphicsView->setScene(seleccion);
     ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
@@ -36,27 +35,34 @@ Seleccion::~Seleccion()
     delete ui;
 }
 
-void Seleccion::on_regresar_clicked()
-{
-    emit regresarMenu();
-    this->close();
-}
-
-
 void Seleccion::on_btnKrilin_clicked()
 {
     krilin->detenerAnimacion();
-    goku->detenerAnimacion();
-    emit personajeSeleccionado("Krilin");
-    this->close();
+     goku->iniciarAnimacion();
+    personajeElegido = "Krilin";
 }
 
 
 void Seleccion::on_bthGoku_clicked()
 {
     goku->detenerAnimacion();
-    krilin->detenerAnimacion();
-    emit personajeSeleccionado("Goku");
-    this->close();
+    krilin->iniciarAnimacion();
+    personajeElegido = "Goku";
+}
+
+
+void Seleccion::on_regresar_clicked()
+{
+    emit regresarMenu();
+}
+
+
+void Seleccion::on_btnComenzar_clicked()
+{
+    if (personajeElegido.isEmpty()) {
+        return;
+    }
+     qDebug() << "Personaje elegido:" << personajeElegido;
+    emit personajeSeleccionado(personajeElegido, 5, 1);
 }
 

@@ -6,6 +6,7 @@
 #include <QGraphicsView>
 #include <QGraphicsItem>
 #include <QGraphicsRectItem>
+#include <QPushButton>
 #include "personaje.h"
 #include "piedras.h"
 #include "objetos.h"
@@ -19,8 +20,10 @@ class Entrenamiento : public QWidget
     Q_OBJECT
 
 public:
-    explicit Entrenamiento(QString personajeSeleccionado, int vidasIniciales, int piedrasIniciales, int nivel, int derrotas, QWidget *parent = nullptr);
+    explicit Entrenamiento(QWidget *parent = nullptr);
     ~Entrenamiento();
+
+    //void iniciarNivel1(QString personajeSeleccionado, int vidasIniciales, int nivel);
 
 private slots:
     void on_pausa_clicked();
@@ -32,10 +35,14 @@ public slots:
     void pantallaVictoria();
     void detenerTimersGlobales();
     void reanudarTimersGlobales();
-    void reiniciarPartida(int vidasr, int piedrasr);
+    void limpiaObjetos();
+    void iniciarNivel1(QString personajeSeleccionado, int vidasIniciales, int nivel);
 
 signals:
     void volverSeleccionar();
+    void reiniciarNivel(QString personaje, int vidas, int nivel);
+    void siguienteNivel(QString personaje, int vidas, int nivel);
+    void entrenamientoTerminado();
 
 private:
     Ui::Entrenamiento *ui;
@@ -60,7 +67,16 @@ private:
     //Entrenamiento *entrenamiento2;
     //Objetos *piedra;
     int nivelActual = 1;
-    int derrotasNivel = 0;
+
+    QGraphicsRectItem* derrotaPantalla;
+    QGraphicsTextItem* derrotaTexto;
+    QPushButton* botonReiniciar;
+    QPushButton* botonMenu;
+
+    QGraphicsRectItem* victoriaPantalla;
+    QGraphicsTextItem* victoriaTexto;
+    QPushButton* botonContinuar;
+    QPushButton* botonMenu1;
 };
 
 #endif // ENTRENAMIENTO_H

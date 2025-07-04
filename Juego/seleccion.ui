@@ -62,10 +62,24 @@
     <string>GOKU</string>
    </property>
   </widget>
+  <widget class="QPushButton" name="btnComenzar">
+   <property name="geometry">
+    <rect>
+     <x>490</x>
+     <y>610</y>
+     <width>83</width>
+     <height>29</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>COMENZAR</string>
+   </property>
+  </widget>
   <zorder>graphicsView</zorder>
   <zorder>regresar</zorder>
   <zorder>btnKrilin</zorder>
   <zorder>bthGoku</zorder>
+  <zorder>btnComenzar</zorder>
  </widget>
  <resources/>
  <connections/>

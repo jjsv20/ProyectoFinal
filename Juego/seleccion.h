@@ -26,7 +26,7 @@ public:
 
 signals:
     void regresarMenu();
-    void personajeSeleccionado(QString nombre);
+    void personajeSeleccionado(QString nombre, int vidas, int nivel);
 
 private slots:
     void on_regresar_clicked();
@@ -35,11 +35,14 @@ private slots:
 
     void on_bthGoku_clicked();
 
+    void on_btnComenzar_clicked();
+
 private:
     Ui::Seleccion *ui;
     QGraphicsScene *seleccion;
     Personaje *krilin, *goku;
     QGraphicsPixmapItem *fondoItem;
+    QString personajeElegido;
 };
 
 #endif // SELECCION_H

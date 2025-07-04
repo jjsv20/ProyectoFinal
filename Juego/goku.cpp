@@ -117,9 +117,10 @@ void Goku::colisionPiedras()
             if (contadorPiedras >= 4 && !getNivelCompletado()) {
                 //setNivelCompletado(true);
                 QTimer::singleShot(1500, this, [=]() {
-                    qDebug() << "Emit partidaCompletada por recolectar piedras";
-                    qDebug() << "Nivel completado:" << getNivelCompletado();
                     emit partidaCompletada();
+                    qDebug() << "Emit partidaCompletada por recolectar piedras";
+                    qDebug() << "Nivel completado:" << this->nivelCompletado;
+                    //emit partidaCompletada();
                 });
             }
         }
@@ -177,6 +178,8 @@ void Goku::desactivarTimers()
 void Goku::reanudarAnimacion()
 {
     iniciarAnimacion();
+    caminar->start(40);
+    saltar->start(40);
     timerColision->start(50);
 }
 

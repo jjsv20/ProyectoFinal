@@ -31,10 +31,17 @@ void Piedras::moverPiedra()
     setPos(newX, y());
     if(newX + pixmap().width() <= 0){
         emit eliminarLista(this);
-        if(scene()){
-            scene()->removeItem(this);
-            deleteLater();
-            return;
+        if (timer) {
+            timer->stop();
+            timer->deleteLater();
+            timer = nullptr;
         }
+        emit eliminarLista(this);
+
+        if (scene()) {
+            scene()->removeItem(this);
+        }
+
+        this->deleteLater();
     }
 }
