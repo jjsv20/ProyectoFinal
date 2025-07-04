@@ -23,10 +23,11 @@ public:
     explicit Seleccion(QWidget *parent = nullptr);
     ~Seleccion();
     void actualizar();
+    void reiniciar();
 
 signals:
     void regresarMenu();
-    void personajeSeleccionado(QString nombre, int vidas, int nivel);
+    void personajeSeleccionado(QString nombre, int vidas, int nivel, int derrotas);
 
 private slots:
     void on_regresar_clicked();

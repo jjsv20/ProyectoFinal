@@ -68,6 +68,7 @@
     </widget>
    </widget>
    <widget class="Entrenamiento" name="paginaEntrenamiento"/>
+   <widget class="QWidget" name="p"/>
   </widget>
  </widget>
  <customwidgets>
@@ -80,7 +81,7 @@
   <customwidget>
    <class>Entrenamiento</class>
    <extends>QWidget</extends>
-   <header location="global">entrenamiento.h</header>
+   <header>entrenamiento.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -14,6 +14,25 @@ Entrenamiento::Entrenamiento(QWidget *parent)
     ui->graphicsView->setGeometry(this->rect());
     ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    texto = nullptr;
+    vidasT = nullptr;
+    fondoE = nullptr;
+    fondoEE = nullptr;
+    textoTiempo = nullptr;
+    timerTiempo = nullptr;
+    personajeActual = nullptr;
+    timerPiedras = nullptr;
+    timerRocas = nullptr;
+    derrotaPantalla = nullptr;
+    derrotaTexto = nullptr;
+    botonReiniciar = nullptr;
+    botonMenu = nullptr;
+    victoriaPantalla = nullptr;
+    victoriaTexto = nullptr;
+    botonContinuar = nullptr;
+    botonMenu1 = nullptr;
+
 }
 
 Entrenamiento::~Entrenamiento()
@@ -24,22 +43,23 @@ Entrenamiento::~Entrenamiento()
     qDebug() << "Entrenamiento destruido correctamente";
 }
 
-void Entrenamiento::iniciarNivel1(QString personajeSeleccionado, int vidasIniciales, int nivel)
+void Entrenamiento::iniciarNivel1(QString personajeSeleccionado, int vidasIniciales, int nivel, int derrotas)
 {
+    limpiaObjetos();
+
     personaje = personajeSeleccionado;
     nivelActual = nivel;
+    contadorDerrotas = derrotas;
 
     qDebug() << "Iniciando nivel" << nivelActual << "con personaje" << personaje;
 
     QPixmap fondo;
-    if (nivelActual == 1) {
-        fondo.load(":/imagenes/isla.png");
-    } else {
-        fondo.load(":/imagenes/fondoN1.png");
-    }
+    fondo.load(":/imagenes/isla.png");
     widthFondo = fondo.width();
+
     fondoE = escenaEntrenamiento->addPixmap(fondo);
     fondoE->setZValue(-1);
+
     fondoEE = escenaEntrenamiento->addPixmap(fondo);
     fondoEE->setPos(widthFondo, 0);
     fondoEE->setZValue(-1);
@@ -54,13 +74,19 @@ void Entrenamiento::iniciarNivel1(QString personajeSeleccionado, int vidasInicia
         qDebug() << "Krilin creado correctamente";
     }
 
+    if (!personajeActual) {
+        qDebug() << "No se pudo crear personaje";
+        return;
+    }
+
     personajeActual->setPos(100, 492);
     personajeActual->setContadorVidas(vidasIniciales);
     personajeActual->setContadorPiedras(0);
     personajeActual->setFlag(QGraphicsItem::ItemIsFocusable);
     personajeActual->setFocus();
     escenaEntrenamiento->addItem(personajeActual);
-    personajeActual->iniciarAnimacion();
+    //personajeActual->iniciarAnimacion();
+    if (personajeActual) personajeActual->iniciarAnimacion();
     personajeActual->setEstaMuerto(false);
 
     connect(personajeActual, &Personaje::moverFondoSignal, this, &Entrenamiento::moverFondo);
@@ -84,11 +110,41 @@ void Entrenamiento::iniciarNivel1(QString personajeSeleccionado, int vidasInicia
     timerRocas = new QTimer(this);
     connect(timerRocas, &QTimer::timeout, this, &Entrenamiento::crearRocas);
     timerRocas->start(2000);
+
+    tiempo = 30;
+    textoTiempo = escenaEntrenamiento->addText("Tiempo: 30", QFont("Arial", 24));
+    textoTiempo->setDefaultTextColor(Qt::red);
+    textoTiempo->setPos(900, 20);
+
+    timerTiempo = new QTimer(this);
+    connect(timerTiempo, &QTimer::timeout, this, &Entrenamiento::cuentaRegresiva);
+    timerTiempo->start(1000);
+}
+
+void Entrenamiento::cuentaRegresiva()
+{
+    if (!personajeActual) {
+        return;
+    }
+
+    tiempo--;
+    if (textoTiempo)
+        textoTiempo->setPlainText("Tiempo: " + QString::number(tiempo));
+    if (tiempo <= 0) {
+        timerTiempo->stop();
+        if (personajeActual->getContadorPiedras() < 4) {
+            qDebug() << "Tiempo agotado. No se recolectaron suficientes piedras.";
+            pantallaDerrota();
+        } else {
+            qDebug() << "Tiempo agotado, pero recolectó suficientes piedras.";
+            pantallaVictoria();
+        }
+    }
 }
 
 void Entrenamiento::on_pausa_clicked()
 {
-    ui->pausa->setEnabled(false);
+    ui->pausa->hide();
     detenerTimersGlobales();
     QGraphicsRectItem* panelPausa = new QGraphicsRectItem(0, 0, 1080, 720);
     panelPausa->setBrush(QColor(0, 0, 0, 150));
@@ -124,6 +180,8 @@ void Entrenamiento::on_pausa_clicked()
         botonMenu->deleteLater();
         botonSalir->deleteLater();
         reanudarTimersGlobales();
+        ui->pausa->show();
+        ui->pausa->setEnabled(true);
     });
     connect(botonMenu, &QPushButton::clicked, this, [=]() {
         emit volverSeleccionar();
@@ -174,12 +232,15 @@ void Entrenamiento::crearRocas()
 }
 
 void Entrenamiento::pantallaDerrota() {
-    ui->pausa->setEnabled(false);
+    ui->pausa->hide();
     detenerTimersGlobales();
+
     derrotaPantalla = new QGraphicsRectItem(0, 0, 1080, 720);
     derrotaPantalla->setBrush(QColor(0, 0, 0, 150));
     derrotaPantalla->setZValue(20);
     escenaEntrenamiento->addItem(derrotaPantalla);
+
+    contadorDerrotas++;
 
     derrotaTexto = new QGraphicsTextItem("PERDISTE");
     derrotaTexto->setDefaultTextColor(Qt::white);
@@ -188,7 +249,7 @@ void Entrenamiento::pantallaDerrota() {
     derrotaTexto->setPos(450, 200);
     escenaEntrenamiento->addItem(derrotaTexto);
 
-    botonReiniciar = new QPushButton("Reiniciar", this);
+    /*/botonReiniciar = new QPushButton("Reiniciar", this);
     botonReiniciar->setGeometry(450, 300, 180, 40);
     botonReiniciar->raise();
     botonReiniciar->show();
@@ -196,9 +257,9 @@ void Entrenamiento::pantallaDerrota() {
     botonMenu = new QPushButton("Volver al Menú", this);
     botonMenu->setGeometry(450, 360, 180, 40);
     botonMenu->raise();
-    botonMenu->show();
+    botonMenu->show();/*/
 
-    connect(botonReiniciar, &QPushButton::clicked, this, [=]() {
+    QTimer::singleShot(3000, this, [=]() {
         if (derrotaPantalla && derrotaPantalla->scene())
             escenaEntrenamiento->removeItem(derrotaPantalla);
         delete derrotaPantalla;
@@ -209,13 +270,13 @@ void Entrenamiento::pantallaDerrota() {
         delete derrotaTexto;
         derrotaTexto = nullptr;
 
-        if (botonReiniciar) botonReiniciar->deleteLater();
-        if (botonMenu) botonMenu->deleteLater();
-        botonReiniciar = nullptr;
-        botonMenu = nullptr;
-        detenerTimersGlobales();
-        limpiaObjetos();
-        emit volverSeleccionar();
+        if (contadorDerrotas < 3) {
+            limpiaObjetos();
+            iniciarNivel1(personaje, 5, nivelActual, contadorDerrotas);
+        } else {
+            limpiaObjetos();
+            emit volverSeleccionar(); // vuelve al menú
+        }
     });
 
     connect(botonMenu, &QPushButton::clicked, this, [=]() {
@@ -240,7 +301,7 @@ void Entrenamiento::pantallaDerrota() {
 }
 
 void Entrenamiento::pantallaVictoria() {
-    ui->pausa->setEnabled(false);
+    ui->pausa->hide();
     detenerTimersGlobales();
 
     victoriaPantalla = new QGraphicsRectItem(0, 0, 1080, 720);
@@ -282,8 +343,7 @@ void Entrenamiento::pantallaVictoria() {
             if (botonContinuar) botonContinuar->deleteLater();
             if (botonMenu1) botonMenu1->deleteLater();
             limpiaObjetos();
-            //emit volverSeleccionar();
-            iniciarNivel1(personaje, 5, nivelActual + 1);
+            emit volverSeleccionar();
         } else {
             if (victoriaPantalla && victoriaPantalla->scene())
                 escenaEntrenamiento->removeItem(victoriaPantalla);
@@ -337,6 +397,13 @@ void Entrenamiento::detenerTimersGlobales()
     for (Objetos* r : rocas) {
         if(r) r->detener();
     }
+
+    if (timerTiempo) {
+        timerTiempo->stop();
+        timerTiempo->deleteLater();
+        timerTiempo = nullptr;
+    }
+
 }
 
 void Entrenamiento::reanudarTimersGlobales()
@@ -356,6 +423,8 @@ void Entrenamiento::reanudarTimersGlobales()
     for (Objetos* r : rocas) {
         if(r) r->reanudar();
     }
+
+    if (timerTiempo) timerTiempo->start(1000);
 }
 
 void Entrenamiento::limpiaObjetos()
@@ -402,5 +471,16 @@ void Entrenamiento::limpiaObjetos()
         escenaEntrenamiento->removeItem(fondoEE);
         delete fondoEE;
         fondoEE = nullptr;
+    }
+
+    if (timerTiempo) {
+        timerTiempo->stop();
+        timerTiempo->deleteLater();
+        timerTiempo = nullptr;
+    }
+    if (textoTiempo) {
+        escenaEntrenamiento->removeItem(textoTiempo);
+        delete textoTiempo;
+        textoTiempo = nullptr;
     }
 }

@@ -35,10 +35,22 @@ Seleccion::~Seleccion()
     delete ui;
 }
 
+void Seleccion::reiniciar()
+{
+    personajeElegido.clear();
+    if (krilin) {
+        krilin->iniciarAnimacion();
+    }
+    if (goku) {
+        goku->iniciarAnimacion();
+    }
+
+}
+
 void Seleccion::on_btnKrilin_clicked()
 {
     krilin->detenerAnimacion();
-     goku->iniciarAnimacion();
+     goku->detenerAnimacion();
     personajeElegido = "Krilin";
 }
 
@@ -46,7 +58,7 @@ void Seleccion::on_btnKrilin_clicked()
 void Seleccion::on_bthGoku_clicked()
 {
     goku->detenerAnimacion();
-    krilin->iniciarAnimacion();
+    krilin->detenerAnimacion();
     personajeElegido = "Goku";
 }
 
@@ -63,6 +75,6 @@ void Seleccion::on_btnComenzar_clicked()
         return;
     }
      qDebug() << "Personaje elegido:" << personajeElegido;
-    emit personajeSeleccionado(personajeElegido, 5, 1);
+    emit personajeSeleccionado(personajeElegido, 5, 1, 0);
 }
 

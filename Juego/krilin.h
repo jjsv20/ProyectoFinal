@@ -7,7 +7,6 @@
 #include <QKeyEvent>
 #include <QDebug>
 #include <QPainter>
-#include <piedras.h>
 #include <objetos.h>
 
 class Krilin : public Personaje

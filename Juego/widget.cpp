@@ -37,14 +37,24 @@ void Widget::mostrarSeleccion()
 
 void Widget::mostrarMenu()
 {
-     ui->stackedWidget->setCurrentWidget(ui->paginaMenu);
+    entrenamiento->limpiaObjetos();
+    ui->stackedWidget->setCurrentWidget(ui->paginaMenu);
 }
 
-void Widget::iniciarEntrenamiento(QString personaje, int vidas, int nivel)
+void Widget::reiniciarSeleccion()
 {
+    if (paginaSeleccion) {
+        paginaSeleccion->reiniciar();
+        ui->stackedWidget->setCurrentWidget(paginaSeleccion);
+    }
+}
+
+void Widget::iniciarEntrenamiento(QString personaje, int vidas, int nivel, int derrotas)
+{
+    //entrenamiento = qobject_cast<Entrenamiento*>(ui->paginaEntrenamiento);
     qDebug() << "Iniciando entrenamiento con" << personaje;
-    entrenamiento->limpiaObjetos();
-    entrenamiento->iniciarNivel1(personaje, vidas, nivel);
+    ///entrenamiento->limpiaObjetos();
+    entrenamiento->iniciarNivel1(personaje, vidas, nivel, derrotas);
     ui->stackedWidget->setCurrentWidget(ui->paginaEntrenamiento);
 }
 

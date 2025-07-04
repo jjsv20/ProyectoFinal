@@ -5,8 +5,6 @@
 Objetos::Objetos(QString tipoObjeto, QObject *parent)
     : QObject{parent}, tipo(tipoObjeto)
 {
-    //setPixmap(QPixmap(":/imagenes/roca.png"));
-    //setPos(1080, 600);
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &Objetos::moverObjeto);
     timer->start(20);

@@ -8,7 +8,6 @@
 #include <QGraphicsRectItem>
 #include <QPushButton>
 #include "personaje.h"
-#include "piedras.h"
 #include "objetos.h"
 
 namespace Ui {
@@ -36,12 +35,11 @@ public slots:
     void detenerTimersGlobales();
     void reanudarTimersGlobales();
     void limpiaObjetos();
-    void iniciarNivel1(QString personajeSeleccionado, int vidasIniciales, int nivel);
+    void iniciarNivel1(QString personajeSeleccionado, int vidasIniciales, int nivel, int derrotas);
+    void cuentaRegresiva();
 
 signals:
     void volverSeleccionar();
-    void reiniciarNivel(QString personaje, int vidas, int nivel);
-    void siguienteNivel(QString personaje, int vidas, int nivel);
     void entrenamientoTerminado();
 
 private:
@@ -77,6 +75,12 @@ private:
     QGraphicsTextItem* victoriaTexto;
     QPushButton* botonContinuar;
     QPushButton* botonMenu1;
+
+    QTimer *timerTiempo;
+    int tiempo = 0;
+    QGraphicsTextItem *textoTiempo;
+
+    int contadorDerrotas;
 };
 
 #endif // ENTRENAMIENTO_H

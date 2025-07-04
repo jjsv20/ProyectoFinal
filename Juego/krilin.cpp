@@ -106,7 +106,7 @@ void Krilin::colisionPiedras()
     const auto items = scene()->items();
     for(auto i : items){
         Objetos *r = dynamic_cast<Objetos*>(i);
-        if(r && r->getTipo() == "roca"){
+        if(r && r->getTipo() == "piedra"){
             if(this->collidesWithItem(r)){
                 qDebug() << "Colision piedra";
                 scene()->removeItem(r);
