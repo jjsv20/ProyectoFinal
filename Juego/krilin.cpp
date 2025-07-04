@@ -105,10 +105,11 @@ void Krilin::colisionPiedras()
 {
     const auto items = scene()->items();
     for(auto i : items){
-        if(Piedras *p = dynamic_cast<Piedras*>(i)){
-            if(this->collidesWithItem(p)){
+        Objetos *r = dynamic_cast<Objetos*>(i);
+        if(r && r->getTipo() == "roca"){
+            if(this->collidesWithItem(r)){
                 qDebug() << "Colision piedra";
-                scene()->removeItem(p);
+                scene()->removeItem(r);
                 contadorPiedras += 1;
                 qDebug() << "Piedras recolectadas:" << contadorPiedras;
                 if(puntos) {
@@ -116,11 +117,11 @@ void Krilin::colisionPiedras()
                 }
             }
             if (contadorPiedras >= 4 && !getNivelCompletado()) {
-                //setNivelCompletado(true);
                 QTimer::singleShot(1500, this, [=]() {
-                    qDebug() << "Emit partidaCompletada por recolectar piedras";
-                    qDebug() << "Nivel completado:" << getNivelCompletado();
                     emit partidaCompletada();
+                    qDebug() << "Emit partidaCompletada por recolectar piedras";
+                    qDebug() << "Nivel completado:" << this->nivelCompletado;
+                    //emit partidaCompletada();
                 });
             }
         }
@@ -132,8 +133,9 @@ void Krilin::colisionRocas()
     if (getEstaMuerto()) return;
     const auto items = scene()->items();
     for(auto i : items){
-        if(Objetos *p = dynamic_cast<Objetos*>(i)){
-            if(this->collidesWithItem(p)){
+        Objetos *r = dynamic_cast<Objetos*>(i);
+        if(r && r->getTipo() == "roca"){
+            if(this->collidesWithItem(r)){
                 qDebug() << "Colision roca";
                 perderVida();
                 break;

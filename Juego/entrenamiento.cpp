@@ -54,12 +54,6 @@ void Entrenamiento::iniciarNivel1(QString personajeSeleccionado, int vidasInicia
         qDebug() << "Krilin creado correctamente";
     }
 
-    /*/if (!personajeActual) {
-        qDebug() << "No se pudo crear el personaje" << personaje;
-        emit volverSeleccionar();
-        return;
-    }/*/
-
     personajeActual->setPos(100, 492);
     personajeActual->setContadorVidas(vidasIniciales);
     personajeActual->setContadorPiedras(0);
@@ -156,11 +150,11 @@ void Entrenamiento::moverFondo(int dx)
 void Entrenamiento::crearPiedras()
 {
     if(piedras.count() < 10){
-        Piedras *p = new Piedras();
+        Objetos *p = new Objetos("piedra", this);
         escenaEntrenamiento->addItem(p);
         piedras.append(p);
 
-        connect(p, &Piedras::eliminarLista, this, [=](Piedras *piedra){
+        connect(p, &Objetos::eliminarPiedra, this, [=](Objetos *piedra){
             piedras.removeOne(piedra);
         });
     }
@@ -169,7 +163,7 @@ void Entrenamiento::crearPiedras()
 void Entrenamiento::crearRocas()
 {
     if(rocas.count() < 4){
-        Objetos *r = new Objetos(this);
+        Objetos *r = new Objetos("roca", this);
         escenaEntrenamiento->addItem(r);
         rocas.append(r);
 
@@ -335,7 +329,7 @@ void Entrenamiento::detenerTimersGlobales()
     }
 
     if (timerPiedras) timerPiedras->stop();
-    for (Piedras* p : piedras) {
+    for (Objetos* p : piedras) {
         if (p) p->detener();
     }
 
@@ -354,7 +348,7 @@ void Entrenamiento::reanudarTimersGlobales()
     }
 
     if (timerPiedras) timerPiedras->start(5000);
-    for (Piedras* p : piedras) {
+    for (Objetos* p : piedras) {
         if (p) p->reanudar();
     }
 
@@ -366,7 +360,7 @@ void Entrenamiento::reanudarTimersGlobales()
 
 void Entrenamiento::limpiaObjetos()
 {
-    for (Piedras* p : piedras) {
+    for (Objetos* p : piedras) {
         if (p && p->scene()) {
             escenaEntrenamiento->removeItem(p);
             p->deleteLater();

@@ -104,7 +104,8 @@ void Goku::colisionPiedras()
 {
     const auto items = scene()->items();
     for(auto i : items){
-        if(Piedras *p = dynamic_cast<Piedras*>(i)){
+        Objetos *p = dynamic_cast<Objetos*>(i);
+        if(p && p->getTipo() == "piedra"){
             if(this->collidesWithItem(p)){
                 qDebug() << "Colision piedra";
                 scene()->removeItem(p);
@@ -115,7 +116,6 @@ void Goku::colisionPiedras()
                 }
             }
             if (contadorPiedras >= 4 && !getNivelCompletado()) {
-                //setNivelCompletado(true);
                 QTimer::singleShot(1500, this, [=]() {
                     emit partidaCompletada();
                     qDebug() << "Emit partidaCompletada por recolectar piedras";
@@ -132,10 +132,10 @@ void Goku::colisionRocas()
     if (getEstaMuerto()) return;
     const auto items = scene()->items();
     for(auto i : items){
-        if(Objetos *p = dynamic_cast<Objetos*>(i)){
-            if(this->collidesWithItem(p)){
+        Objetos *r = dynamic_cast<Objetos*>(i);
+        if(r && r->getTipo() == "roca"){
+            if(this->collidesWithItem(r)){
                 qDebug() << "Colision roca";
-                moveBy(-20, 0);
                 perderVida();
                 break;
             }

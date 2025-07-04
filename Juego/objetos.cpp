@@ -1,14 +1,23 @@
 #include "objetos.h"
 #include <QTimer>
+#include <QRandomGenerator>
 
-Objetos::Objetos(QObject *parent)
-    : QObject{parent}
+Objetos::Objetos(QString tipoObjeto, QObject *parent)
+    : QObject{parent}, tipo(tipoObjeto)
 {
-    setPixmap(QPixmap(":/imagenes/roca.png"));
-    setPos(1080, 600);
+    //setPixmap(QPixmap(":/imagenes/roca.png"));
+    //setPos(1080, 600);
     timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, &Objetos::moverRoca);
+    connect(timer, &QTimer::timeout, this, &Objetos::moverObjeto);
     timer->start(20);
+
+    if (tipo == "roca") {
+        setPixmap(QPixmap(":/imagenes/roca.png"));
+    } else if (tipo == "piedra") {
+        setPixmap(QPixmap(":/imagenes/piedra.png"));
+    }
+
+    setPos(1080, QRandomGenerator::global()->bounded(600));
 }
 
 void Objetos::detener()
@@ -25,9 +34,32 @@ void Objetos::reanudar()
     }
 }
 
+QString Objetos::getTipo() const
+{
+    return tipo;
+}
+
+void Objetos::moverObjeto()
+{
+    if (tipo == "roca") {
+        moveBy(-5, 0);
+    } else if (tipo == "piedra") {
+        moveBy(-8, 0);
+    }
+
+    if (x() < -50) {
+        if (tipo == "roca")
+            emit eliminarRoca(this);
+        else if (tipo == "piedra")
+            emit eliminarPiedra(this);
+
+        deleteLater();
+    }
+}
 
 
-void Objetos::moverRoca()
+
+/*/void Objetos::moverRoca()
 {
     int newX = x() - 5;
     setPos(newX, y());
@@ -46,4 +78,4 @@ void Objetos::moverRoca()
 
         deleteLater();
     }
-}
+}/*/

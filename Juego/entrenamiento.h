@@ -53,7 +53,7 @@ private:
 
     QTimer *timerPiedras;
     int nPiedras;
-    QList<Piedras *> piedras;
+    QList<Objetos *> piedras;
     QTimer *timerRocas;
     int nRocas;
     QList<Objetos *> rocas;

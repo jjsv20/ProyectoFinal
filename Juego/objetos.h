@@ -10,17 +10,21 @@ class Objetos : public QObject, public QGraphicsPixmapItem
 {
     Q_OBJECT
 public:
-    explicit Objetos(QObject *parent = nullptr);
+    explicit Objetos(QString tiopObejto, QObject *parent = nullptr);
+    //virtual void mover();
     void detener();
     void reanudar();
+    QString getTipo() const;
 signals:
     void eliminarRoca(Objetos *rocas);
+    void eliminarPiedra(Objetos *piedra);
 
 public slots:
-    void moverRoca();
+    void moverObjeto();
 
 private:
     QTimer *timer;
+    QString tipo;
 };
 
 #endif // OBJETOS_H
