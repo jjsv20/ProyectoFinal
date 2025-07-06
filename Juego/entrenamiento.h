@@ -40,7 +40,7 @@ public slots:
 
 signals:
     void volverSeleccionar();
-    void entrenamientoTerminado();
+    void entrenamientoTerminado(QString personajeSeleccionado, int vidasIniciales, int nivel, int derrotas);
 
 private:
     Ui::Entrenamiento *ui;

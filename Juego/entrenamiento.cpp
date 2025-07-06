@@ -39,6 +39,8 @@ Entrenamiento::~Entrenamiento()
 {
     detenerTimersGlobales();
     limpiaObjetos();
+    escenaEntrenamiento->clear();
+    delete escenaEntrenamiento;
     delete ui;
     qDebug() << "Entrenamiento destruido correctamente";
 }
@@ -51,6 +53,7 @@ void Entrenamiento::iniciarNivel1(QString personajeSeleccionado, int vidasInicia
     nivelActual = nivel;
     contadorDerrotas = derrotas;
 
+    qDebug() << "Personaje recibido en entrenamiento:" << personajeSeleccionado;
     qDebug() << "Iniciando nivel" << nivelActual << "con personaje" << personaje;
 
     QPixmap fondo;
@@ -79,19 +82,7 @@ void Entrenamiento::iniciarNivel1(QString personajeSeleccionado, int vidasInicia
         return;
     }
 
-    personajeActual->setPos(100, 492);
-    personajeActual->setContadorVidas(vidasIniciales);
-    personajeActual->setContadorPiedras(0);
-    personajeActual->setFlag(QGraphicsItem::ItemIsFocusable);
-    personajeActual->setFocus();
     escenaEntrenamiento->addItem(personajeActual);
-    //personajeActual->iniciarAnimacion();
-    if (personajeActual) personajeActual->iniciarAnimacion();
-    personajeActual->setEstaMuerto(false);
-
-    connect(personajeActual, &Personaje::moverFondoSignal, this, &Entrenamiento::moverFondo);
-    connect(personajeActual, &Personaje::finalPartida, this, &Entrenamiento::pantallaDerrota);
-    connect(personajeActual, &Personaje::partidaCompletada, this, &Entrenamiento::pantallaVictoria);
 
     texto = escenaEntrenamiento->addText("x 0", QFont("Arial", 24));
     texto->setDefaultTextColor(Qt::yellow);
@@ -102,6 +93,18 @@ void Entrenamiento::iniciarNivel1(QString personajeSeleccionado, int vidasInicia
     vidasT->setDefaultTextColor(Qt::yellow);
     vidasT->setPos(50, 50);
     personajeActual->setVidas(vidasT);
+
+    personajeActual->setPos(100, 492);
+    personajeActual->setContadorVidas(5);
+    personajeActual->setContadorPiedras(0);
+    personajeActual->setFlag(QGraphicsItem::ItemIsFocusable);
+    personajeActual->setFocus();
+    personajeActual->iniciarAnimacion();
+    personajeActual->setEstaMuerto(false);
+
+    connect(personajeActual, &Personaje::moverFondoSignal, this, &Entrenamiento::moverFondo);
+    connect(personajeActual, &Personaje::finalPartida, this, &Entrenamiento::pantallaDerrota);
+    connect(personajeActual, &Personaje::partidaCompletada, this, &Entrenamiento::pantallaVictoria);
 
     timerPiedras = new QTimer(this);
     connect(timerPiedras, &QTimer::timeout, this, &Entrenamiento::crearPiedras);
@@ -249,16 +252,6 @@ void Entrenamiento::pantallaDerrota() {
     derrotaTexto->setPos(450, 200);
     escenaEntrenamiento->addItem(derrotaTexto);
 
-    /*/botonReiniciar = new QPushButton("Reiniciar", this);
-    botonReiniciar->setGeometry(450, 300, 180, 40);
-    botonReiniciar->raise();
-    botonReiniciar->show();
-
-    botonMenu = new QPushButton("Volver al Menú", this);
-    botonMenu->setGeometry(450, 360, 180, 40);
-    botonMenu->raise();
-    botonMenu->show();/*/
-
     QTimer::singleShot(3000, this, [=]() {
         if (derrotaPantalla && derrotaPantalla->scene())
             escenaEntrenamiento->removeItem(derrotaPantalla);
@@ -277,27 +270,7 @@ void Entrenamiento::pantallaDerrota() {
             limpiaObjetos();
             emit volverSeleccionar(); // vuelve al menú
         }
-    });
-
-    connect(botonMenu, &QPushButton::clicked, this, [=]() {
-        if (derrotaPantalla && derrotaPantalla->scene())
-            escenaEntrenamiento->removeItem(derrotaPantalla);
-        delete derrotaPantalla;
-        derrotaPantalla = nullptr;
-
-        if (derrotaTexto && derrotaTexto->scene())
-            escenaEntrenamiento->removeItem(derrotaTexto);
-        delete derrotaTexto;
-        derrotaTexto = nullptr;
-
-        if (botonReiniciar) botonReiniciar->deleteLater();
-        if (botonMenu) botonMenu->deleteLater();
-        botonReiniciar = nullptr;
-        botonMenu = nullptr;
-        detenerTimersGlobales();
-        limpiaObjetos();
-        emit volverSeleccionar();
-    });
+    });   
 }
 
 void Entrenamiento::pantallaVictoria() {
@@ -316,53 +289,10 @@ void Entrenamiento::pantallaVictoria() {
     victoriaTexto->setPos(450, 200);
     escenaEntrenamiento->addItem(victoriaTexto);
 
-    botonContinuar = new QPushButton("Continuar", this);
-    botonContinuar->setGeometry(450, 300, 180, 40);
-    botonContinuar->raise();
-    botonContinuar->show();
+    int vidasRestantes = personajeActual->getContadorVidas();
+    int derrotas = contadorDerrotas;
 
-    botonMenu1 = new QPushButton("Volver al Menú", this);
-    botonMenu1->setGeometry(450, 360, 180, 40);
-    botonMenu1->raise();
-    botonMenu1->show();
-
-    connect(botonContinuar, &QPushButton::clicked, this, [=]() {
-        qDebug() << "Siguiente nivel";
-
-        if (nivelActual < 2) {
-            if (victoriaPantalla && victoriaPantalla->scene())
-                escenaEntrenamiento->removeItem(victoriaPantalla);
-            delete victoriaPantalla;
-            victoriaPantalla = nullptr;
-
-            if (victoriaTexto && victoriaTexto->scene())
-                escenaEntrenamiento->removeItem(victoriaTexto);
-            delete victoriaTexto;
-            victoriaTexto = nullptr;
-
-            if (botonContinuar) botonContinuar->deleteLater();
-            if (botonMenu1) botonMenu1->deleteLater();
-            limpiaObjetos();
-            emit volverSeleccionar();
-        } else {
-            if (victoriaPantalla && victoriaPantalla->scene())
-                escenaEntrenamiento->removeItem(victoriaPantalla);
-            delete victoriaPantalla;
-            victoriaPantalla = nullptr;
-
-            if (victoriaTexto && victoriaTexto->scene())
-                escenaEntrenamiento->removeItem(victoriaTexto);
-            delete victoriaTexto;
-            victoriaTexto = nullptr;
-
-            if (botonContinuar) { botonContinuar->deleteLater(); botonContinuar = nullptr; }
-            if (botonMenu1) { botonMenu1->deleteLater(); botonMenu1 = nullptr; }
-            limpiaObjetos();
-            emit entrenamientoTerminado();
-        }
-    });
-
-    connect(botonMenu1, &QPushButton::clicked, this, [=]() {
+    QTimer::singleShot(3000, this, [=]() {
         if (victoriaPantalla && victoriaPantalla->scene())
             escenaEntrenamiento->removeItem(victoriaPantalla);
         delete victoriaPantalla;
@@ -372,12 +302,8 @@ void Entrenamiento::pantallaVictoria() {
             escenaEntrenamiento->removeItem(victoriaTexto);
         delete victoriaTexto;
         victoriaTexto = nullptr;
-
-        if (botonContinuar) botonContinuar->deleteLater();
-        if (botonMenu1) botonMenu1->deleteLater();
-        detenerTimersGlobales();
         limpiaObjetos();
-        emit volverSeleccionar();
+        emit entrenamientoTerminado(personaje, vidasRestantes, nivelActual, derrotas);
     });
 }
 
@@ -446,6 +372,7 @@ void Entrenamiento::limpiaObjetos()
     rocas.clear();
 
     if (personajeActual) {
+        personajeActual->desactivarTimers();
         escenaEntrenamiento->removeItem(personajeActual);
         personajeActual->deleteLater();
         personajeActual = nullptr;

@@ -54,26 +54,3 @@ void Objetos::moverObjeto()
         deleteLater();
     }
 }
-
-
-
-/*/void Objetos::moverRoca()
-{
-    int newX = x() - 5;
-    setPos(newX, y());
-    if(newX + pixmap().width() <= 5){
-        emit eliminarRoca(this);
-        if (timer) {
-            timer->stop();
-            timer->deleteLater();
-            timer = nullptr;
-        }
-
-        emit eliminarRoca(this);
-        if (scene()) {
-            scene()->removeItem(this);
-        }
-
-        deleteLater();
-    }
-}/*/

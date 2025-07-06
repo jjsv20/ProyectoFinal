@@ -5,12 +5,15 @@ Goku::Goku(QObject *parent)
 {
     coordenadaX = 0;
     coordenadaY = 0;
-    ancho = 66;
+    ancho = 70;
     alto = 100;
 
-    pixmap = new QPixmap(":/imagenes/movimientosGoku.png");
+    pixmap = new QPixmap(":/imagenes/1-Goku.png");
     setPixmap(pixmap->copy(coordenadaX, coordenadaY, ancho, alto));
     setPos(100, 380);
+
+    setFlag(QGraphicsItem::ItemIsFocusable);
+    setFocus();
 
     frameActual = 0;
     totalFramesDerecha = 6;
@@ -29,20 +32,32 @@ Goku::Goku(QObject *parent)
     connect(timerColision, &QTimer::timeout, this, &Goku::colisionRocas);
     timerColision->start(50);
 
+    /*/frameAtaque = 0;
+
+    timerPuno = new QTimer(this);
+    connect(timerPuno, &QTimer::timeout, this, &Goku::animarPuno);
+
+    timerPatada = new QTimer(this);
+    connect(timerPatada, &QTimer::timeout, this, &Goku::animarPatada);/*/
+
     moviendoDerecha = false;
     moviendoIzquierda = false;
     saltando = false;
+    //puno = false;
+    //patada = false;
 
     gravedad = 5;
     velocidadY = 0;
     velocidadX = 0;
+
 }
 
 QRectF Goku::boundingRect() const {
     return QRectF(0, 0, ancho, alto);
 }
 
-void Goku::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) {
+void Goku::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
+{
     painter->drawPixmap(0, 0, *pixmap, coordenadaX, coordenadaY, ancho, alto);
 }
 
@@ -72,8 +87,8 @@ void Goku::animarSalto()
 {
     coordenadaY = 300;
     frameActual = (frameActual + 1) % 9;
-    coordenadaX = frameActual * ancho;
-    setPixmap(pixmap->copy(coordenadaX, coordenadaY, ancho, alto));
+    coordenadaX = frameActual * 70;
+    setPixmap(pixmap->copy(coordenadaX, coordenadaY, 70, alto));
     setX(x() + velocidadX);
     setY(y() + velocidadY);
     velocidadY += gravedad;
@@ -143,6 +158,64 @@ void Goku::colisionRocas()
     }
 }
 
+/*/void Goku::animarPuno()
+{
+    if (!pixmap || !timerPuno) return;
+
+    coordenadaY = 400;
+    coordenadaX = frameActual * ancho;
+    setPixmap(pixmap->copy(coordenadaX, coordenadaY, ancho, alto));
+
+    frameActual++;
+
+    if (frameActual >= 6) {
+        timerPuno->stop();
+        puno = false;
+        frameActual = 0;
+        volverASeleccion();
+    }
+}
+
+void Goku::animarPatada()
+{
+    if (!pixmap || !timerPatada) return;
+
+    coordenadaY = 600;
+    coordenadaX = frameActual * ancho;
+    setPixmap(pixmap->copy(coordenadaX, coordenadaY, ancho, alto));
+
+    frameActual++;
+
+    if (frameActual >= 6) {
+        timerPatada->stop();
+        patada = false;
+        frameActual = 0;
+        volverASeleccion();
+    }
+}
+
+void Goku::reacionGolpe()
+{
+    if (getEstaMuerto() || golpeRecibido) return;
+
+    golpeRecibido = true;
+    coordenadaY = 500;
+    coordenadaX = 0;
+    setPixmap(pixmap->copy(coordenadaX, coordenadaY, ancho, alto));
+
+    setOpacity(0.5);
+
+    QTimer::singleShot(400, this, [=]() {
+        setOpacity(1.0);
+        golpeRecibido = false;
+        if (moviendoDerecha || moviendoIzquierda) {
+            caminar->start(40);
+        } else {
+            volverASeleccion();
+        }
+    });
+}/*/
+
 void Goku::perderVida()
 {
     if (getEstaMuerto()) return;
@@ -151,10 +224,6 @@ void Goku::perderVida()
     if (vidasActuales > 0) {
         setContadorVidas(vidasActuales - 1);
         qDebug() << "Perdió una vida. Vidas restantes:" << getContadorVidas();
-
-        if (vidasT) {
-            vidasT->setPlainText("Vidas: " + QString::number(getContadorVidas()));
-        }
     }
     if (getContadorVidas() == 0) {
         qDebug() << "¡Game Over!";
@@ -173,6 +242,8 @@ void Goku::desactivarTimers()
     saltar->stop();
     seleccion->stop();
     timerColision->stop();
+    //timerPuno->stop();
+    //timerPatada->stop();
 }
 
 void Goku::reanudarAnimacion()
@@ -225,6 +296,7 @@ void Goku::keyReleaseEvent(QKeyEvent *event)
 void Goku::keyPressEvent(QKeyEvent *event)
 {
     if(getEnPausa()) return;
+    //if (puno || patada) return;
 
     if (event->key() == Qt::Key_Right && !event->isAutoRepeat()) {
         moviendoDerecha = true;
@@ -254,5 +326,17 @@ void Goku::keyPressEvent(QKeyEvent *event)
             saltando = true;
             saltar->start(30);
         }
-    }
+    }/*/else if (event->key() == Qt::Key_Z && !event->isAutoRepeat()) {
+        if (!patada && !puno && !saltando) {
+            patada = true;
+            frameActual = 0;
+            timerPatada->start(60);
+        }
+    } else if (event->key() == Qt::Key_X && !event->isAutoRepeat()) {
+        if (!puno && !patada && !saltando) {
+            puno = true;
+            frameActual = 0;
+            timerPuno->start(60);
+        }
+    }/*/
 }

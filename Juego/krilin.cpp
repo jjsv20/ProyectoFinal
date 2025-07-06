@@ -152,10 +152,6 @@ void Krilin::perderVida()
     if (vidasActuales > 0) {
         setContadorVidas(vidasActuales - 1);
         qDebug() << "Perdió una vida. Vidas restantes:" << getContadorVidas();
-
-        if (vidasT) {
-            vidasT->setPlainText("Vidas: " + QString::number(getContadorVidas()));
-        }
     }
     if (getContadorVidas() == 0) {
         qDebug() << "¡Game Over!";

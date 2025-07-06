@@ -44,11 +44,14 @@ protected:
     int contadorVidas;
     int contadorPiedras;
     QGraphicsTextItem* puntos;
-    QGraphicsTextItem* vidasT;
+    QGraphicsTextItem* vidasT = nullptr;
 
     bool enPausa = false;
     bool nivelCompletado = false;
     bool estaMuerto = false;
+
+    QTimer *timerPuno;
+    QTimer *timerPatada;
 };
 
 #endif // PERSONAJE_H

@@ -3,7 +3,7 @@
 Personaje::Personaje(QObject *parent)
     : QObject{parent}, QGraphicsPixmapItem()
 {
-
+    contadorVidas = 5;
 }
 
 void Personaje::setPuntos(QGraphicsTextItem* texto) {

@@ -3,9 +3,11 @@
         <file>imagenes/CAMINO AL TORNEO.png</file>
         <file>imagenes/isla.png</file>
         <file>imagenes/movimientosKrilin.png</file>
-        <file>imagenes/movimientosGoku.png</file>
         <file>imagenes/seleccion.png</file>
         <file>imagenes/piedra.png</file>
         <file>imagenes/roca.png</file>
+        <file>imagenes/jackieChun.png</file>
+        <file>imagenes/combate.png</file>
+        <file>imagenes/1-Goku.png</file>
     </qresource>
 </RCC>
