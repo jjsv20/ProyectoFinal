@@ -26,6 +26,7 @@ public:
 
 private slots:
     void on_pausa_clicked();
+
 public slots:
     void moverFondo(int dx);
     void crearPiedras();
@@ -46,7 +47,7 @@ private:
     Ui::Entrenamiento *ui;
     QGraphicsScene *escenaEntrenamiento;
 
-    QGraphicsPixmapItem *fondoE, *fondoEE;
+    QGraphicsPixmapItem *fondoE, *fondoEE, *avatar, *piedraItem;
     QGraphicsTextItem *texto, *vidasT;
 
     QTimer *timerPiedras;
@@ -62,8 +63,6 @@ private:
 
     Personaje *personajeActual;
     QString personaje;
-    //Entrenamiento *entrenamiento2;
-    //Objetos *piedra;
     int nivelActual = 1;
 
     QGraphicsRectItem* derrotaPantalla;
@@ -81,6 +80,7 @@ private:
     QGraphicsTextItem *textoTiempo;
 
     int contadorDerrotas;
+
 };
 
 #endif // ENTRENAMIENTO_H

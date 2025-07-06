@@ -5,6 +5,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QGraphicsTextItem>
+#include <QGraphicsRectItem>
 #include <QTimer>
 #include <QDebug>
 #include "goku.h"
@@ -55,8 +56,6 @@ private:
     QTimer *timerTiempo;
     QGraphicsTextItem *textoTiempo;
 
-    QGraphicsRectItem *barraVida;
-    QGraphicsRectItem *barraFondo;
 
     QGraphicsRectItem* derrotaPantalla;
     QGraphicsTextItem* derrotaTexto;

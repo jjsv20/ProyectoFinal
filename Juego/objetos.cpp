@@ -13,9 +13,10 @@ Objetos::Objetos(QString tipoObjeto, QObject *parent)
         setPixmap(QPixmap(":/imagenes/roca.png"));
     } else if (tipo == "piedra") {
         setPixmap(QPixmap(":/imagenes/piedra.png"));
+
     }
 
-    setPos(1080, QRandomGenerator::global()->bounded(600));
+    setPos(1080, QRandomGenerator::global()->bounded(360, 540));
 }
 
 void Objetos::detener()
@@ -40,7 +41,7 @@ QString Objetos::getTipo() const
 void Objetos::moverObjeto()
 {
     if (tipo == "roca") {
-        moveBy(-5, 0);
+        moveBy(-10, 0);
     } else if (tipo == "piedra") {
         moveBy(-8, 0);
     }

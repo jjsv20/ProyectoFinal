@@ -81,6 +81,7 @@ void Krilin::animarSalto()
     const qreal alturaSuelo = 592 - boundingRect().height();  // donde aterriza
 
     if (y() >= alturaSuelo) {
+        sonidoAterrizaje.play();
         setY(alturaSuelo);
         velocidadY = 0;
         velocidadX = 0;
@@ -108,6 +109,7 @@ void Krilin::colisionPiedras()
         Objetos *r = dynamic_cast<Objetos*>(i);
         if(r && r->getTipo() == "piedra"){
             if(this->collidesWithItem(r)){
+                sonidoPremio.play();
                 qDebug() << "Colision piedra";
                 scene()->removeItem(r);
                 contadorPiedras += 1;

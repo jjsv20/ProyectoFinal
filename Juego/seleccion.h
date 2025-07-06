@@ -10,6 +10,7 @@
 #include "personaje.h"
 #include "widget.h"
 #include "krilin.h"
+#include <QSoundEffect>
 
 namespace Ui {
 class Seleccion;
@@ -44,6 +45,8 @@ private:
     Personaje *krilin, *goku;
     QGraphicsPixmapItem *fondoItem;
     QString personajeElegido;
+
+    QSoundEffect sonidoSeleccion;
 };
 
 #endif // SELECCION_H

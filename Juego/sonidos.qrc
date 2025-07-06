@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/">
+        <file>sonido/aterrizar.wav</file>
+        <file>sonido/golpeRecibidoKrilin.wav</file>
+        <file>sonido/golpeRgoku.wav</file>
+        <file>sonido/golpeRoshi.wav</file>
+        <file>sonido/jugar.wav</file>
+        <file>sonido/muertegoku.wav</file>
+        <file>sonido/muerteKrilin.wav</file>
+        <file>sonido/muerteRoshi.wav</file>
+        <file>sonido/premio.wav</file>
+        <file>sonido/saltoGoku.wav</file>
+        <file>sonido/salyoKrilin.wav</file>
+        <file>sonido/seleccionPersonaje.wav</file>
+    </qresource>
+</RCC>

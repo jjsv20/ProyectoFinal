@@ -88,9 +88,11 @@ void Goku::animarSalto()
     setX(x() + velocidadX);
     setY(y() + velocidadY);
     velocidadY += gravedad;
+    //sonidoSalto.play();
     const qreal alturaSuelo = 592 - boundingRect().height();  // donde aterriza
 
     if (y() >= alturaSuelo) {
+        sonidoAterrizaje.play();
         setY(alturaSuelo);
         velocidadY = 0;
         velocidadX = 0;
@@ -118,20 +120,20 @@ void Goku::colisionPiedras()
         Objetos *p = dynamic_cast<Objetos*>(i);
         if(p && p->getTipo() == "piedra"){
             if(this->collidesWithItem(p)){
+                sonidoPremio.play();
                 qDebug() << "Colision piedra";
                 scene()->removeItem(p);
                 contadorPiedras += 1;
                 qDebug() << "Piedras recolectadas:" << contadorPiedras;
                 if(puntos) {
-                    puntos->setPlainText("x " + QString::number(contadorPiedras));
+                    puntos->setPlainText("x " + QString::number(contadorPiedras) + "/10");
                 }
             }
-            if (contadorPiedras >= 4 && !getNivelCompletado()) {
+            if (contadorPiedras == 10 && !getNivelCompletado()) {
                 QTimer::singleShot(1500, this, [=]() {
                     emit partidaCompletada();
                     qDebug() << "Emit partidaCompletada por recolectar piedras";
                     qDebug() << "Nivel completado:" << this->nivelCompletado;
-                    //emit partidaCompletada();
                 });
             }
         }
@@ -146,6 +148,8 @@ void Goku::colisionRocas()
         Objetos *r = dynamic_cast<Objetos*>(i);
         if(r && r->getTipo() == "roca"){
             if(this->collidesWithItem(r)){
+                sonidoGolpeRecibido.play();
+                reacionGolpe();
                 qDebug() << "Colision roca";
                 perderVida();
                 break;
@@ -195,6 +199,7 @@ void Goku::reacionGolpe()
     if (getEstaMuerto() || golpeRecibido) return;
 
     golpeRecibido = true;
+    sonidoGolpeRecibido.play();
     coordenadaY = 500;
     coordenadaX = 0;
     setPixmap(pixmap->copy(coordenadaX, coordenadaY, ancho, alto));
@@ -317,6 +322,7 @@ void Goku::keyPressEvent(QKeyEvent *event)
             }else {
                 velocidadX = 0;
             }
+            sonidoSalto.play();
             caminar->stop();
             velocidadY = -40;
             saltando = true;

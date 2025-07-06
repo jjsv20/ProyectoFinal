@@ -4,6 +4,10 @@
 #include <QObject>
 #include <QGraphicsPixmapItem>
 #include <QGraphicsTextItem>
+#include <QSoundEffect>
+#include <QTimer>
+#include <QGraphicsScene>
+#include <QGraphicsRectItem>
 
 class Personaje : public QObject, public QGraphicsPixmapItem
 {
@@ -37,14 +41,23 @@ public:
     virtual void animarPuno();
     virtual void animarPatada();
 
+    virtual void setVidasMaximas(int max);
+    virtual int getVidasMaximas() const;
+
+    virtual void actualizarBarraVida();
+    virtual void inciarBarraVida(QGraphicsScene *escena);
+    virtual void eliminarBarraVida();
+
 signals:
     void partidaCompletada();
     void finalPartida();
     void moverFondoSignal(int dx);
     void reiniciarPartida();
+    void vida(int vidasRestantes, int vidasMaximas);
 
 protected:
     int contadorVidas;
+    int vidasMaximas;
     int contadorPiedras;
     QGraphicsTextItem* puntos;
     QGraphicsTextItem* vidasT = nullptr;
@@ -57,6 +70,14 @@ protected:
     QTimer *timerPatada;
     bool puno = false;
     bool patada = false;
+
+    QSoundEffect sonidoSalto;
+    QSoundEffect sonidoAterrizaje;
+    QSoundEffect sonidoGolpeRecibido;
+    QSoundEffect sonidoPremio;
+
+    QGraphicsRectItem* barraVida = nullptr;
+    QGraphicsScene* escenaActual = nullptr;
 };
 
 #endif // PERSONAJE_H

@@ -9,6 +9,7 @@
 #include <QUrl>
 #include <QAudioOutput>
 #include <QDebug>
+#include <QSoundEffect>
 
 class Seleccion;
 QT_BEGIN_NAMESPACE
@@ -41,5 +42,8 @@ private:
     Combate *combate;
     QMediaPlayer *musicaFondo;
     QAudioOutput *volumen;
+
+    QSoundEffect sonidoJugar;
+
 };
 #endif // WIDGET_H

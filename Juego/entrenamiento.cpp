@@ -57,7 +57,7 @@ void Entrenamiento::iniciarNivel1(QString personajeSeleccionado, int vidasInicia
     qDebug() << "Iniciando nivel" << nivelActual << "con personaje" << personaje;
 
     QPixmap fondo;
-    fondo.load(":/imagenes/entrenamiento.png");
+    fondo.load(":/imagenes/entreno.png");
     widthFondo = fondo.width();
 
     fondoE = escenaEntrenamiento->addPixmap(fondo);
@@ -84,18 +84,31 @@ void Entrenamiento::iniciarNivel1(QString personajeSeleccionado, int vidasInicia
 
     escenaEntrenamiento->addItem(personajeActual);
 
-    texto = escenaEntrenamiento->addText("x 0", QFont("Arial", 24));
-    texto->setDefaultTextColor(Qt::yellow);
-    texto->setPos(30, 20);
+    QPixmap piedraPixmap(":/imagenes/piedra.png");
+    piedraItem = escenaEntrenamiento->addPixmap(piedraPixmap.scaled(30, 30, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    piedraItem->setPos(350, 20);
+
+    texto = escenaEntrenamiento->addText("x 0/10", QFont("Arial", 20));
+    texto->setDefaultTextColor(Qt::black);
+    texto->setPos(390, 15);
     personajeActual->setPuntos(texto);
 
-    vidasT = escenaEntrenamiento->addText("Vidas: 5", QFont("Arial", 24));
-    vidasT->setDefaultTextColor(Qt::yellow);
-    vidasT->setPos(50, 50);
-    personajeActual->setVidas(vidasT);
+    QPixmap avatarPixmap;
+
+    if(personaje == "Goku"){
+        avatarPixmap.load(":/imagenes/avatarGoku.png");
+    }else if(personaje == "Krilin"){
+        avatarPixmap.load(":/imagenes/avatarGoku.png");
+    }
+
+    avatar = escenaEntrenamiento->addPixmap(avatarPixmap.scaled(50, 50, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    avatar->setPos(20, 10);
+    avatar->setZValue(10);
 
     personajeActual->setPos(100, 492);
-    personajeActual->setContadorVidas(5);
+    personajeActual->setVidasMaximas(vidasIniciales);
+    personajeActual->setContadorVidas(vidasIniciales);
+    personajeActual->inciarBarraVida(escenaEntrenamiento);
     personajeActual->setContadorPiedras(0);
     personajeActual->setFlag(QGraphicsItem::ItemIsFocusable);
     personajeActual->setFocus();
@@ -114,8 +127,8 @@ void Entrenamiento::iniciarNivel1(QString personajeSeleccionado, int vidasInicia
     connect(timerRocas, &QTimer::timeout, this, &Entrenamiento::crearRocas);
     timerRocas->start(2000);
 
-    tiempo = 30;
-    textoTiempo = escenaEntrenamiento->addText("Tiempo: 30", QFont("Arial", 24));
+    tiempo = 50;
+    textoTiempo = escenaEntrenamiento->addText("Tiempo: 50", QFont("Arial", 24));
     textoTiempo->setDefaultTextColor(Qt::red);
     textoTiempo->setPos(900, 20);
 
@@ -135,7 +148,7 @@ void Entrenamiento::cuentaRegresiva()
         textoTiempo->setPlainText("Tiempo: " + QString::number(tiempo));
     if (tiempo <= 0) {
         timerTiempo->stop();
-        if (personajeActual->getContadorPiedras() < 4) {
+        if (personajeActual->getContadorPiedras() < 10) {
             qDebug() << "Tiempo agotado. No se recolectaron suficientes piedras.";
             pantallaDerrota();
         } else {
@@ -223,7 +236,7 @@ void Entrenamiento::crearPiedras()
 
 void Entrenamiento::crearRocas()
 {
-    if(rocas.count() < 4){
+    if(rocas.count() < 10){
         Objetos *r = new Objetos("roca", this);
         escenaEntrenamiento->addItem(r);
         rocas.append(r);
@@ -373,6 +386,7 @@ void Entrenamiento::limpiaObjetos()
 
     if (personajeActual) {
         personajeActual->desactivarTimers();
+        personajeActual->eliminarBarraVida();
         escenaEntrenamiento->removeItem(personajeActual);
         personajeActual->deleteLater();
         personajeActual = nullptr;

@@ -19,9 +19,6 @@ Combate::Combate(QWidget *parent)
     roshi = nullptr;
     timerTiempo = nullptr;
     textoTiempo = nullptr;
-    barraFondo = nullptr;
-    barraVida = nullptr;
-
 }
 
 void Combate::iniciarCombate(QString personajeSeleccionado, int nivel, int derrotas)
@@ -59,12 +56,13 @@ void Combate::iniciarCombate(QString personajeSeleccionado, int nivel, int derro
     personajeJugador->setPos(100, 492);
     personajeJugador->setFlag(QGraphicsItem::ItemIsFocusable);
     personajeJugador->setFocus();
-    //personajeActual->iniciarAnimacion();
-    if (personajeJugador) personajeJugador->iniciarAnimacion();
+    personajeJugador->iniciarAnimacion();
     personajeJugador->setEstaMuerto(false);
+    personajeJugador->setVidasMaximas(5);
+    personajeJugador->setContadorVidas(5);
+    personajeJugador->inciarBarraVida(escenaCombate);
 
     escenaCombate->addItem(personajeJugador);
-
     roshi->setRival(personajeJugador);
 
     tiempo = 30;
@@ -75,9 +73,6 @@ void Combate::iniciarCombate(QString personajeSeleccionado, int nivel, int derro
     timerTiempo = new QTimer(this);
     connect(timerTiempo, &QTimer::timeout, this, &Combate::cuentaRegresiva);
     timerTiempo->start(1000);
-
-    barraVida = escenaCombate->addRect(30, 20, 200, 20, QPen(Qt::black), QBrush(Qt::green));
-
 }
 
 void Combate::cuentaRegresiva()
@@ -115,6 +110,7 @@ void Combate::limpiaObjetos()
 
     if (personajeJugador && escenaCombate) {
         escenaCombate->removeItem(personajeJugador);
+        personajeJugador->eliminarBarraVida();
         delete personajeJugador;
         personajeJugador = nullptr;
     }

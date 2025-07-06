@@ -28,6 +28,8 @@ Seleccion::Seleccion(QWidget *parent)
     seleccion->addItem(goku);
     goku->setScale(2.5);
     goku->iniciarAnimacion();
+
+    sonidoSeleccion.setSource(QUrl("qrc:/sonido/seleccionPersonaje.wav"));
 }
 
 Seleccion::~Seleccion()
@@ -49,6 +51,7 @@ void Seleccion::reiniciar()
 
 void Seleccion::on_btnKrilin_clicked()
 {
+    sonidoSeleccion.play();
     krilin->detenerAnimacion();
      goku->detenerAnimacion();
     personajeElegido = "Krilin";
@@ -57,6 +60,7 @@ void Seleccion::on_btnKrilin_clicked()
 
 void Seleccion::on_bthGoku_clicked()
 {
+    sonidoSeleccion.play();
     goku->detenerAnimacion();
     krilin->detenerAnimacion();
     personajeElegido = "Goku";
@@ -65,6 +69,7 @@ void Seleccion::on_bthGoku_clicked()
 
 void Seleccion::on_regresar_clicked()
 {
+    sonidoSeleccion.play();
     emit regresarMenu();
 }
 
@@ -74,7 +79,7 @@ void Seleccion::on_btnComenzar_clicked()
     if (personajeElegido.isEmpty()) {
         return;
     }
-     qDebug() << "Personaje elegido:" << personajeElegido;
+    qDebug() << "Personaje elegido:" << personajeElegido;
     emit personajeSeleccionado(personajeElegido, 5, 1, 0);
 }
 
