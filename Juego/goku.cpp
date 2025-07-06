@@ -32,19 +32,15 @@ Goku::Goku(QObject *parent)
     connect(timerColision, &QTimer::timeout, this, &Goku::colisionRocas);
     timerColision->start(50);
 
-    /*/frameAtaque = 0;
-
     timerPuno = new QTimer(this);
     connect(timerPuno, &QTimer::timeout, this, &Goku::animarPuno);
 
     timerPatada = new QTimer(this);
-    connect(timerPatada, &QTimer::timeout, this, &Goku::animarPatada);/*/
+    connect(timerPatada, &QTimer::timeout, this, &Goku::animarPatada);
 
     moviendoDerecha = false;
     moviendoIzquierda = false;
     saltando = false;
-    //puno = false;
-    //patada = false;
 
     gravedad = 5;
     velocidadY = 0;
@@ -158,7 +154,7 @@ void Goku::colisionRocas()
     }
 }
 
-/*/void Goku::animarPuno()
+void Goku::animarPuno()
 {
     if (!pixmap || !timerPuno) return;
 
@@ -214,7 +210,7 @@ void Goku::reacionGolpe()
             volverASeleccion();
         }
     });
-}/*/
+}
 
 void Goku::perderVida()
 {
@@ -296,7 +292,7 @@ void Goku::keyReleaseEvent(QKeyEvent *event)
 void Goku::keyPressEvent(QKeyEvent *event)
 {
     if(getEnPausa()) return;
-    //if (puno || patada) return;
+    if (puno || patada) return;
 
     if (event->key() == Qt::Key_Right && !event->isAutoRepeat()) {
         moviendoDerecha = true;
@@ -326,7 +322,7 @@ void Goku::keyPressEvent(QKeyEvent *event)
             saltando = true;
             saltar->start(30);
         }
-    }/*/else if (event->key() == Qt::Key_Z && !event->isAutoRepeat()) {
+    }else if (event->key() == Qt::Key_Z && !event->isAutoRepeat()) {
         if (!patada && !puno && !saltando) {
             patada = true;
             frameActual = 0;
@@ -338,5 +334,5 @@ void Goku::keyPressEvent(QKeyEvent *event)
             frameActual = 0;
             timerPuno->start(60);
         }
-    }/*/
+    }
 }

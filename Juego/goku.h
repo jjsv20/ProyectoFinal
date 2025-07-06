@@ -29,9 +29,9 @@ public slots:
     void volverASeleccion();
     void colisionPiedras();
     void colisionRocas();
-    //void animarPuno();
-    //void animarPatada();
-    //void reacionGolpe();
+    void animarPuno();
+    void animarPatada();
+    void reacionGolpe();
     void desactivarTimers() override;
     void reanudarAnimacion() override;
     void setPausa(bool estado) { enPausa = estado; }
@@ -67,12 +67,7 @@ private:
     int frameActual = 0;
     int totalFramesDerecha;
 
-    /*/bool puno;
-    bool patada;
-    QTimer *timerPuno, *timerPatada;
-    int frameAtaque;
-    bool golpeRecibido =false;/*/
-
+    bool golpeRecibido;
 };
 
 #endif // GOKU_H

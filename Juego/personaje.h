@@ -34,6 +34,9 @@ public:
     virtual void setEstaMuerto(bool estado);
     virtual bool getEstaMuerto() const;
 
+    virtual void animarPuno();
+    virtual void animarPatada();
+
 signals:
     void partidaCompletada();
     void finalPartida();
@@ -52,6 +55,8 @@ protected:
 
     QTimer *timerPuno;
     QTimer *timerPatada;
+    bool puno = false;
+    bool patada = false;
 };
 
 #endif // PERSONAJE_H

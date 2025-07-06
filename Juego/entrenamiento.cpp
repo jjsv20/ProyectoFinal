@@ -57,7 +57,7 @@ void Entrenamiento::iniciarNivel1(QString personajeSeleccionado, int vidasInicia
     qDebug() << "Iniciando nivel" << nivelActual << "con personaje" << personaje;
 
     QPixmap fondo;
-    fondo.load(":/imagenes/isla.png");
+    fondo.load(":/imagenes/entrenamiento.png");
     widthFondo = fondo.width();
 
     fondoE = escenaEntrenamiento->addPixmap(fondo);

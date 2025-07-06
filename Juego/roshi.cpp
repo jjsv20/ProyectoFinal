@@ -90,7 +90,7 @@ void Roshi::atacarRoshi()
             if (rival) {
                 Goku *goku = dynamic_cast<Goku*>(rival);
                 if (goku) {
-                    //goku->reacionGolpe();
+                    goku->reacionGolpe();
                 }
             }
         }

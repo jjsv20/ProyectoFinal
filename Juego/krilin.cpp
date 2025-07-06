@@ -5,9 +5,9 @@ Krilin::Krilin(QObject *parent)
 {
     coordenadaX = 0;
     coordenadaY = 0;
-    ancho = 66;
+    ancho = 100;
     alto = 100;
-    pixmap = new QPixmap(":/imagenes/movimientosKrilin.png");
+    pixmap = new QPixmap(":/imagenes/2-Krilin.png");
     setPixmap(pixmap->copy(coordenadaX, coordenadaY, ancho, alto));
     setPos(750, 380);
     frameActual = 0;
@@ -195,7 +195,7 @@ void Krilin::volverASeleccion()
 
 void Krilin::iniciarAnimacion()
 {
-    seleccion->start(120);
+    seleccion->start(100);
 }
 
 void Krilin::detenerAnimacion()

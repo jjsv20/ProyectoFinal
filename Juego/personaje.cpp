@@ -56,6 +56,16 @@ bool Personaje::getEstaMuerto() const {
     return estaMuerto;
 }
 
+void Personaje::animarPuno()
+{
+
+}
+
+void Personaje::animarPatada()
+{
+
+}
+
 void Personaje::setEstaMuerto(bool muerto) {
     estaMuerto = muerto;
 }
