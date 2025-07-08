@@ -4,11 +4,12 @@
         <file>imagenes/seleccion.png</file>
         <file>imagenes/piedra.png</file>
         <file>imagenes/roca.png</file>
-        <file>imagenes/jackieChun.png</file>
         <file>imagenes/combate.png</file>
         <file>imagenes/1-Goku.png</file>
         <file>imagenes/2-Krilin.png</file>
         <file>imagenes/entreno.png</file>
         <file>imagenes/avatarGoku.png</file>
+        <file>imagenes/avatarKrilin.png</file>
+        <file>imagenes/3-JackieChun.png</file>
     </qresource>
 </RCC>

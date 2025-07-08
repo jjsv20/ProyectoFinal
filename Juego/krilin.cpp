@@ -118,12 +118,11 @@ void Krilin::colisionPiedras()
                     puntos->setPlainText("x " + QString::number(contadorPiedras));
                 }
             }
-            if (contadorPiedras >= 4 && !getNivelCompletado()) {
+            if (contadorPiedras >= 10 && !getNivelCompletado()) {
                 QTimer::singleShot(1500, this, [=]() {
                     emit partidaCompletada();
                     qDebug() << "Emit partidaCompletada por recolectar piedras";
                     qDebug() << "Nivel completado:" << this->nivelCompletado;
-                    //emit partidaCompletada();
                 });
             }
         }

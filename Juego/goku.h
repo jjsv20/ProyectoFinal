@@ -2,6 +2,7 @@
 #define GOKU_H
 
 #include "personaje.h"
+#include "roshi.h"
 #include <QTimer>
 #include <QPixmap>
 #include <QKeyEvent>
@@ -31,7 +32,7 @@ public slots:
     void colisionRocas();
     void animarPuno();
     void animarPatada();
-    void reacionGolpe();
+    void reaccionGolpe() override;
     void desactivarTimers() override;
     void reanudarAnimacion() override;
     void setPausa(bool estado) { enPausa = estado; }

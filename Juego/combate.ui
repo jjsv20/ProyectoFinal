@@ -23,19 +23,6 @@
     </rect>
    </property>
   </widget>
-  <widget class="QPushButton" name="pausa">
-   <property name="geometry">
-    <rect>
-     <x>490</x>
-     <y>20</y>
-     <width>83</width>
-     <height>29</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>PAUSA</string>
-   </property>
-  </widget>
  </widget>
  <resources/>
  <connections/>

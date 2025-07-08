@@ -1,3 +1,4 @@
+
 #include "entrenamiento.h"
 #include "ui_entrenamiento.h"
 #include "personaje.h"
@@ -32,7 +33,6 @@ Entrenamiento::Entrenamiento(QWidget *parent)
     victoriaTexto = nullptr;
     botonContinuar = nullptr;
     botonMenu1 = nullptr;
-
 }
 
 Entrenamiento::~Entrenamiento()
@@ -98,7 +98,7 @@ void Entrenamiento::iniciarNivel1(QString personajeSeleccionado, int vidasInicia
     if(personaje == "Goku"){
         avatarPixmap.load(":/imagenes/avatarGoku.png");
     }else if(personaje == "Krilin"){
-        avatarPixmap.load(":/imagenes/avatarGoku.png");
+        avatarPixmap.load(":/imagenes/avatarKrilin.png");
     }
 
     avatar = escenaEntrenamiento->addPixmap(avatarPixmap.scaled(50, 50, Qt::KeepAspectRatio, Qt::SmoothTransformation));
@@ -108,7 +108,7 @@ void Entrenamiento::iniciarNivel1(QString personajeSeleccionado, int vidasInicia
     personajeActual->setPos(100, 492);
     personajeActual->setVidasMaximas(vidasIniciales);
     personajeActual->setContadorVidas(vidasIniciales);
-    personajeActual->inciarBarraVida(escenaEntrenamiento);
+    personajeActual->inciarBarraVida(escenaEntrenamiento, 70, 15);
     personajeActual->setContadorPiedras(0);
     personajeActual->setFlag(QGraphicsItem::ItemIsFocusable);
     personajeActual->setFocus();
@@ -127,8 +127,8 @@ void Entrenamiento::iniciarNivel1(QString personajeSeleccionado, int vidasInicia
     connect(timerRocas, &QTimer::timeout, this, &Entrenamiento::crearRocas);
     timerRocas->start(2000);
 
-    tiempo = 50;
-    textoTiempo = escenaEntrenamiento->addText("Tiempo: 50", QFont("Arial", 24));
+    tiempo = 60;
+    textoTiempo = escenaEntrenamiento->addText("Tiempo: 60", QFont("Arial", 24));
     textoTiempo->setDefaultTextColor(Qt::red);
     textoTiempo->setPos(900, 20);
 
@@ -148,7 +148,7 @@ void Entrenamiento::cuentaRegresiva()
         textoTiempo->setPlainText("Tiempo: " + QString::number(tiempo));
     if (tiempo <= 0) {
         timerTiempo->stop();
-        if (personajeActual->getContadorPiedras() < 10) {
+        if (personajeActual->getContadorPiedras() < 4) {
             qDebug() << "Tiempo agotado. No se recolectaron suficientes piedras.";
             pantallaDerrota();
         } else {

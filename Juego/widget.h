@@ -30,7 +30,7 @@ private slots:
     void on_botonJugar_clicked();
     void on_botonSalir_clicked();
     void iniciarEntrenamiento(QString personaje, int vidas, int nivel, int derrotas);
-    void iniciarCombate(QString personaje, int nivel, int derrotas);
+    void iniciarCombate(QString personaje);
     void mostrarSeleccion();
     void mostrarMenu();
     void reiniciarSeleccion();

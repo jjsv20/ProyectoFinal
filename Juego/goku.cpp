@@ -66,7 +66,8 @@ void Goku::animar()
         frameActual = (frameActual + 1) % totalFramesDerecha;
         coordenadaX = frameActual * ancho;
         setPixmap(pixmap->copy(coordenadaX, coordenadaY, ancho, alto));
-        //setPos(x() + 10, y());
+        if(x() > 10)
+            setPos(x() + 10, y());
         emit moverFondoSignal(20);
     } else if (moviendoIzquierda) {
         coordenadaY = 200;
@@ -102,6 +103,7 @@ void Goku::animarSalto()
         qDebug() << "Aterrizó en el suelo";
         return;
     }
+
 }
 
 void Goku::actualizar()
@@ -129,7 +131,7 @@ void Goku::colisionPiedras()
                     puntos->setPlainText("x " + QString::number(contadorPiedras) + "/10");
                 }
             }
-            if (contadorPiedras == 10 && !getNivelCompletado()) {
+            if (contadorPiedras == 4 && !getNivelCompletado()) {
                 QTimer::singleShot(1500, this, [=]() {
                     emit partidaCompletada();
                     qDebug() << "Emit partidaCompletada por recolectar piedras";
@@ -148,8 +150,8 @@ void Goku::colisionRocas()
         Objetos *r = dynamic_cast<Objetos*>(i);
         if(r && r->getTipo() == "roca"){
             if(this->collidesWithItem(r)){
-                sonidoGolpeRecibido.play();
-                reacionGolpe();
+                sonidoGolpeRecibidoGoku.play();
+                reaccionGolpe();
                 qDebug() << "Colision roca";
                 perderVida();
                 break;
@@ -165,6 +167,14 @@ void Goku::animarPuno()
     coordenadaY = 400;
     coordenadaX = frameActual * ancho;
     setPixmap(pixmap->copy(coordenadaX, coordenadaY, ancho, alto));
+
+    const auto items = scene()->items();
+    for (auto item : items) {
+        Roshi* r = dynamic_cast<Roshi*>(item);
+        if (r && this->collidesWithItem(r)) {
+            r->reaccionGolpe();
+        }
+    }
 
     frameActual++;
 
@@ -184,6 +194,14 @@ void Goku::animarPatada()
     coordenadaX = frameActual * ancho;
     setPixmap(pixmap->copy(coordenadaX, coordenadaY, ancho, alto));
 
+    const auto items = scene()->items();
+    for (auto item : items) {
+        Roshi* r = dynamic_cast<Roshi*>(item);
+        if (r && this->collidesWithItem(r)) {
+            r->reaccionGolpe();
+        }
+    }
+
     frameActual++;
 
     if (frameActual >= 6) {
@@ -194,16 +212,16 @@ void Goku::animarPatada()
     }
 }
 
-void Goku::reacionGolpe()
+void Goku::reaccionGolpe()
 {
     if (getEstaMuerto() || golpeRecibido) return;
 
     golpeRecibido = true;
-    sonidoGolpeRecibido.play();
+    sonidoGolpeRecibidoGoku.play();
     coordenadaY = 500;
     coordenadaX = 0;
     setPixmap(pixmap->copy(coordenadaX, coordenadaY, ancho, alto));
-
+    setX(x() - 50);
     setOpacity(0.5);
 
     QTimer::singleShot(400, this, [=]() {
@@ -215,6 +233,21 @@ void Goku::reacionGolpe()
             volverASeleccion();
         }
     });
+
+    if (getContadorVidas() > 0) {
+        setContadorVidas(getContadorVidas() - 1);
+        actualizarBarraVida();
+        qDebug() << "Vidas restantes: " << getContadorVidas();
+    }
+
+    if (getContadorVidas() <= 0) {
+        setEstaMuerto(true);
+        golpeRecibido = false;
+        detenerAnimacion();
+        qDebug() << "Goku ha sido derrotado";
+        emit finalPartida();
+        return;
+    }
 }
 
 void Goku::perderVida()
@@ -243,8 +276,8 @@ void Goku::desactivarTimers()
     saltar->stop();
     seleccion->stop();
     timerColision->stop();
-    //timerPuno->stop();
-    //timerPatada->stop();
+    timerPuno->stop();
+     timerPatada->stop();
 }
 
 void Goku::reanudarAnimacion()

@@ -3,14 +3,14 @@
 Roshi::Roshi(QObject *parent) : Personaje{parent}
 {
     setPos(800, 380);
-    ancho = 60;
+    ancho = 100;
     alto = 100;
     coordenadaX = 0;
     coordenadaY = 0;
     frameAtaque = 0;
     atacando = false;
 
-    pixmap = new QPixmap(":/imagenes/jackieChun.png");
+    pixmap = new QPixmap(":/imagenes/3-JackieChun.png");
     setPixmap(pixmap->copy(0, 0, ancho, alto));
 
     timerMovimientoRoshi = new QTimer(this);
@@ -38,9 +38,39 @@ void Roshi::iniciarRoshi()
     timerAtaqueRoshi->start(1500);
 }
 
-void Roshi::setRival(Personaje *rivl)
+void Roshi::reaccionGolpe()
 {
-    rival = rivl;
+    if(getEstaMuerto() || golpeRecibido) return;
+
+    golpeRecibido = true;
+    sonidoGolpeRecibidoRoshi.play();
+    coordenadaY = 400;
+    coordenadaX = 0;
+    setPixmap(pixmap->copy(coordenadaX, coordenadaY, ancho, alto));
+    setX(x() + 90);
+    setOpacity(0.5);
+
+    if (getContadorVidas() > 0) {
+        setContadorVidas(getContadorVidas() - 1);
+        actualizarBarraVida();
+        qDebug() << "Roshi vidas restantes: " << getContadorVidas();
+    }
+
+    if (getContadorVidas() <= 0) {
+        setEstaMuerto(true);
+        detenerAnimacion();
+        qDebug() << "¡Roshi ha sido derrotado!";
+        emit finalPartida();
+    }
+
+    QTimer::singleShot(400, this, [=]() {
+        setOpacity(1.0);
+        golpeRecibido = false;
+        if (!getEstaMuerto()) {
+            iniciarRoshi();
+        }
+    });
+
 }
 
 void Roshi::moverRoshi()
@@ -54,10 +84,10 @@ void Roshi::moverRoshi()
     if (qAbs(distancia) < 10) return;
 
     if (distancia > 0 && x() < 1000) {
-        setX(x() + 10);
+        setX(x() + 7);
     }
     else if(distancia < 0 && (x() > 100)){
-        setX(x() - 10);
+        setX(x() - 7);
     }
 
     actualizar();
@@ -75,7 +105,7 @@ void Roshi::atacarRoshi()
 
     QTimer *animacion = new QTimer(this);
     connect(animacion, &QTimer::timeout, this, [=]() mutable {
-        coordenadaY = 200;
+        coordenadaY = 100;
         coordenadaX = frameAtaque * ancho;
         setPixmap(pixmap->copy(coordenadaX, coordenadaY, ancho, alto));
         frameAtaque++;
@@ -87,11 +117,8 @@ void Roshi::atacarRoshi()
             coordenadaX = 0;
             coordenadaY = 0;
             setPixmap(pixmap->copy(coordenadaX, coordenadaY, ancho, alto));
-            if (rival) {
-                Goku *goku = dynamic_cast<Goku*>(rival);
-                if (goku) {
-                    goku->reacionGolpe();
-                }
+            if (getRival()) {
+                getRival()->reaccionGolpe();
             }
         }
     });
@@ -101,10 +128,9 @@ void Roshi::atacarRoshi()
 
 void Roshi::actualizar()
 {
-    coordenadaX = 7;
-    coordenadaX += ancho;
-    if(coordenadaX >= 300){
-        coordenadaX = 0;
-    }
+    coordenadaY = 200;
+    frameAtaque = 7;
+    frameAtaque = (frameAtaque + 1) % 6;
+    coordenadaX = frameAtaque * ancho;
     setPixmap(pixmap->copy(coordenadaX, coordenadaY, ancho, alto));
 }

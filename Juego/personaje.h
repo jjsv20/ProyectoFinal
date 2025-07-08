@@ -45,8 +45,13 @@ public:
     virtual int getVidasMaximas() const;
 
     virtual void actualizarBarraVida();
-    virtual void inciarBarraVida(QGraphicsScene *escena);
+    virtual void inciarBarraVida(QGraphicsScene *escena, int x, int y);
     virtual void eliminarBarraVida();
+
+    virtual void setRival(Personaje *r);
+    Personaje *getRival()const;
+
+    virtual void reaccionGolpe();
 
 signals:
     void partidaCompletada();
@@ -73,11 +78,16 @@ protected:
 
     QSoundEffect sonidoSalto;
     QSoundEffect sonidoAterrizaje;
-    QSoundEffect sonidoGolpeRecibido;
+    QSoundEffect sonidoGolpeRecibidoGoku;
+    QSoundEffect sonidoGolpeRecibidoKrilin;
     QSoundEffect sonidoPremio;
+    QSoundEffect sonidoGolpeRecibidoRoshi;
 
     QGraphicsRectItem* barraVida = nullptr;
     QGraphicsScene* escenaActual = nullptr;
+    Personaje *rival = nullptr;
+
+    int posicionBarraX, posicionBarraY;
 };
 
 #endif // PERSONAJE_H

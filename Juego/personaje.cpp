@@ -8,8 +8,11 @@ Personaje::Personaje(QObject *parent)
 
     sonidoSalto.setSource(QUrl("qrc:/sonido/saltoGoku.wav"));
     sonidoAterrizaje.setSource(QUrl("qrc:/sonido/aterrizar.wav"));
-    sonidoGolpeRecibido.setSource(QUrl("qrc:/sonido/golpeRgoku.wav"));
+    sonidoGolpeRecibidoGoku.setSource(QUrl("qrc:/sonido/golpeRgoku.wav"));
     sonidoPremio.setSource(QUrl("qrc:/sonido/premio.wav"));
+    sonidoGolpeRecibidoRoshi.setSource(QUrl("qrc:/sonido/golpeRoshi.wav"));
+    sonidoGolpeRecibidoKrilin.setSource(QUrl("qrc:/sonido/golpeRoshi.wav"));
+
 }
 
 void Personaje::setPuntos(QGraphicsTextItem* texto) {
@@ -83,11 +86,19 @@ int Personaje::getVidasMaximas() const
     return vidasMaximas;
 }
 
-void Personaje::inciarBarraVida(QGraphicsScene *escena)
+void Personaje::inciarBarraVida(QGraphicsScene *escena, int x, int y)
 {
     escenaActual = escena;
-    barraVida = escena->addRect(70, 15, 200, 20, QPen(Qt::black), QBrush(Qt::green));
-    barraVida->setZValue(0);
+    posicionBarraX = x;
+    posicionBarraY = y;
+
+    if (barraVida) {
+        escena->removeItem(barraVida);
+        delete barraVida;
+        barraVida = nullptr;
+    }
+    barraVida = escena->addRect(x, y, 200, 20, QPen(Qt::black), QBrush(Qt::green));
+    barraVida->setZValue(1);
     actualizarBarraVida();
 }
 
@@ -96,7 +107,7 @@ void Personaje::actualizarBarraVida()
     if (!barraVida || vidasMaximas <= 0) return;
 
     qreal porcentaje = static_cast<qreal>(contadorVidas) / vidasMaximas;
-    barraVida->setRect(70, 15, 200 * porcentaje, 20);
+    barraVida->setRect(posicionBarraX,posicionBarraY, 200 * porcentaje, 20);
 
     if (porcentaje > 0.5)
         barraVida->setBrush(QBrush(Qt::green));
@@ -113,6 +124,21 @@ void Personaje::eliminarBarraVida()
         delete barraVida;
         barraVida = nullptr;
     }
+}
+
+void Personaje::setRival(Personaje *r)
+{
+    rival = r;
+}
+
+Personaje *Personaje::getRival() const
+{
+    return rival;
+}
+
+void Personaje::reaccionGolpe()
+{
+
 }
 
 void Personaje::setEstaMuerto(bool muerto) {

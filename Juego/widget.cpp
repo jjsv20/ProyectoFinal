@@ -27,7 +27,6 @@ Widget::Widget(QWidget *parent)
     connect(combate, &Combate::combateTerminado, this, &Widget::mostrarMenu);
 
     sonidoJugar.setSource(QUrl("qrc:/sonido/jugar.wav"));
-
 }
 
 
@@ -38,7 +37,7 @@ Widget::~Widget()
 
 void Widget::mostrarSeleccion()
 {
-    volumen->setVolume(0.3);
+    volumen->setVolume(0.0);
     entrenamiento->limpiaObjetos();
     combate->limpiaObjetos();
     ui->stackedWidget->setCurrentWidget(ui->page); // Volver a pantalla de selección
@@ -61,7 +60,6 @@ void Widget::reiniciarSeleccion()
 
 void Widget::iniciarEntrenamiento(QString personaje, int vidas, int nivel, int derrotas)
 {
-    //entrenamiento = qobject_cast<Entrenamiento*>(ui->paginaEntrenamiento);
     volumen->setVolume(0.0);
     qDebug() << "Iniciando entrenamiento con" << personaje;
     entrenamiento->limpiaObjetos();
@@ -69,11 +67,11 @@ void Widget::iniciarEntrenamiento(QString personaje, int vidas, int nivel, int d
     ui->stackedWidget->setCurrentWidget(ui->paginaEntrenamiento);
 }
 
-void Widget::iniciarCombate(QString personaje, int nivel, int derrotas)
+void Widget::iniciarCombate(QString personaje)
 {
     volumen->setVolume(0.0);
     qDebug() << "¡Entrando a la escena de combate!";
-    combate->iniciarCombate(personaje, nivel, derrotas);
+    combate->iniciarCombate(personaje);
     ui->stackedWidget->setCurrentWidget(ui->paginaCombate);
 }
 

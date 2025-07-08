@@ -10,6 +10,7 @@
 #include <QPainter>
 #include <QRandomGenerator>
 #include "goku.h"
+#include <QSoundEffect>
 
 class Roshi : public Personaje
 {
@@ -21,7 +22,9 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) override;
 
     void iniciarRoshi();
-    void setRival(Personaje *rival);
+    void reaccionGolpe() override;
+
+    //void setRival(Personaje *rival);
 
 public slots:
     void moverRoshi();
@@ -34,7 +37,9 @@ private:
     QPixmap *pixmap;
     int frameAtaque, ancho, alto, coordenadaX, coordenadaY;
     bool atacando;
-    Personaje *rival;
+    bool golpeRecibido;
+    //Personaje *rival;
+
 
 signals:
 };

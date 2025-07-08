@@ -27,7 +27,9 @@ public:
 
     void pantallaDerrota();
     void pantallaVictoria();
-    void iniciarCombate(QString personajeSeleccionado, int nivel, int derrotas);
+    void iniciarCombate(QString personajeSeleccionado);
+
+    void mensajeFinal(QString mensaje);
 
 public slots:
     void cuentaRegresiva();
@@ -37,7 +39,6 @@ signals:
     void combateTerminado();
 
 private slots:
-    void on_pausa_clicked();
 
 private:
     Ui::Combate *ui;
@@ -61,6 +62,12 @@ private:
     QGraphicsTextItem* derrotaTexto;
     QGraphicsRectItem* victoriaPantalla;
     QGraphicsTextItem* victoriaTexto;
+
+    QGraphicsPixmapItem *avatar;
+
+    int rondasGanadasJugador = 0;
+    int rondasGanadasRoshi = 0;
+    int rondaActual = 1;
 
 };
 
