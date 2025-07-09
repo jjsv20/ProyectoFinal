@@ -19,6 +19,8 @@ Combate::Combate(QWidget *parent)
     roshi = nullptr;
     timerTiempo = nullptr;
     textoTiempo = nullptr;
+    avatar = nullptr;
+
 }
 
 void Combate::iniciarCombate(QString personajeSeleccionado)
@@ -27,8 +29,6 @@ void Combate::iniciarCombate(QString personajeSeleccionado)
     qDebug() << "¡Combate iniciado!";
 
     personaje = personajeSeleccionado;
-    //nivelActual = nivel;
-    //contadorDerrotas = derrotas;
 
     if (rondaActual == 1) {
         rondasGanadasJugador = 0;
@@ -38,7 +38,7 @@ void Combate::iniciarCombate(QString personajeSeleccionado)
         rondaActual = 1;
     }
 
-    QGraphicsPixmapItem* fondo = new QGraphicsPixmapItem(QPixmap(":/imagenes/combate.png"));
+    QGraphicsPixmapItem* fondo = new QGraphicsPixmapItem(QPixmap(":/imagenes/combate-2.png"));
     escenaCombate->addItem(fondo);
 
     QGraphicsTextItem* textoRonda = escenaCombate->addText("Ronda " + QString::number(rondaActual), QFont("Arial", 28));
@@ -57,7 +57,7 @@ void Combate::iniciarCombate(QString personajeSeleccionado)
         avatarPixmap.load(":/imagenes/avatarKrilin.png");
     }
 
-    avatar = escenaCombate->addPixmap(avatarPixmap.scaled(50, 50, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    avatar = escenaCombate->addPixmap(avatarPixmap.scaled(50, 50));
     avatar->setPos(20, 10);
     avatar->setZValue(10);
 
@@ -76,41 +76,58 @@ void Combate::iniciarCombate(QString personajeSeleccionado)
         return;
     }
 
-    roshi = new Roshi();
-    roshi->setPos(800, 592);
-    roshi->setScale(1.5);
-    roshi->setVidasMaximas(20);
-    roshi->setContadorVidas(20);
-    roshi->inciarBarraVida(escenaCombate, 750, 15);
-    escenaCombate->addItem(roshi);
-
-    personajeJugador->setPos(100, 592);
+    personajeJugador->setPos(100, 492);
     personajeJugador->setFlag(QGraphicsItem::ItemIsFocusable);
     personajeJugador->setFocus();
-    personajeJugador->iniciarAnimacion();
-    personajeJugador->setEstaMuerto(false);
+
+    roshi = new Roshi();
+    roshi->setPos(800, 492);
+    roshi->setScale(1.5);
+
+    roshi->reiniciar();
+    personajeJugador->reiniciar();
+
     personajeJugador->setVidasMaximas(20);
     personajeJugador->setContadorVidas(20);
-    personajeJugador->inciarBarraVida(escenaCombate, 70, 15);
+    roshi->setVidasMaximas(20);
+    roshi->setContadorVidas(20);
 
     escenaCombate->addItem(personajeJugador);
+    escenaCombate->addItem(roshi);
+
+    roshi->inciarBarraVida(escenaCombate, 750, 15);
+    personajeJugador->inciarBarraVida(escenaCombate, 70, 15);
+
+    personajeJugador->setZValue(1);
+    roshi->setZValue(1);
+
     personajeJugador->setRival(roshi);
     roshi->setRival(personajeJugador);
 
-    personajeJugador->reanudarAnimacion();
-    roshi->reanudarAnimacion();
+    connect(personajeJugador, &Personaje::finalPartida, this, &Combate::pantallaDerrota);
+    connect(roshi, &Personaje::finalPartida, this, &Combate::pantallaVictoria);
 
-    tiempo = 50;
-    textoTiempo = escenaCombate->addText("Tiempo: 50", QFont("Arial", 24));
+    personajeJugador->iniciarAnimacion();
+    personajeJugador->setEstaMuerto(false);
+    roshi->iniciarRoshi();
+
+    tiempo = 30;
+    textoTiempo = escenaCombate->addText("Tiempo: 30", QFont("Arial", 24));
     textoTiempo->setDefaultTextColor(Qt::red);
     textoTiempo->setPos(900, 20);
 
     timerTiempo = new QTimer(this);
     connect(timerTiempo, &QTimer::timeout, this, &Combate::cuentaRegresiva);
     timerTiempo->start(1000);
+}
 
-    connect(personajeJugador, &Personaje::finalPartida, this, &Combate::pantallaDerrota);
-    connect(roshi, &Personaje::finalPartida, this, &Combate::pantallaVictoria);
+Combate::~Combate()
+{
+    detenerTimersGlobales();
+    limpiaObjetos();
+    escenaCombate->clear();
+    delete escenaCombate;
+    delete ui;
 }
 
 void Combate::cuentaRegresiva()
@@ -138,6 +155,7 @@ void Combate::cuentaRegresiva()
                 escenaCombate->removeItem(empate);
                 delete empate;
                 rondaActual++;
+                limpiaObjetos();
                 iniciarCombate(personaje);
             });
         }
@@ -146,48 +164,44 @@ void Combate::cuentaRegresiva()
 
 void Combate::limpiaObjetos()
 {
+    detenerTimersGlobales();
+
     if (timerTiempo) {
         timerTiempo->stop();
         delete timerTiempo;
         timerTiempo = nullptr;
     }
 
-    if (textoTiempo && escenaCombate) {
-        escenaCombate->removeItem(textoTiempo);
-        delete textoTiempo;
-        textoTiempo = nullptr;
-    }
+    /*/if (escenaCombate) {
+        escenaCombate->clear();
+    }/*/
 
-    if (personajeJugador && escenaCombate) {
+    if (personajeJugador) {
+        personajeJugador->desactivarTimers();
         escenaCombate->removeItem(personajeJugador);
-        personajeJugador->eliminarBarraVida();
         delete personajeJugador;
         personajeJugador = nullptr;
     }
 
-    if (roshi && escenaCombate) {
+    if (roshi) {
+        roshi->desactivarTimers();
         escenaCombate->removeItem(roshi);
         delete roshi;
         roshi = nullptr;
     }
 
-    if (escenaCombate) {
-        escenaCombate->clear();
-    }
+    escenaCombate->clear();
 
+    textoTiempo = nullptr;
+    avatar = nullptr;
     tiempo = 30;
 
     qDebug() << "Combate limpiado correctamente.";
 }
 
-Combate::~Combate()
-{
-    delete ui;
-}
-
 void Combate::pantallaDerrota()
 {
-    //detenerTimersGlobales();
+    detenerTimersGlobales();
     rondasGanadasRoshi++;
 
     derrotaPantalla = new QGraphicsRectItem(0, 0, 1080, 720);
@@ -213,11 +227,10 @@ void Combate::pantallaDerrota()
         delete derrotaTexto;
         derrotaTexto = nullptr;
 
-        limpiaObjetos();
-
         rondaActual++;
 
         if(rondaActual <= 3){
+            limpiaObjetos();
             iniciarCombate(personaje);
         }else{
             if(rondasGanadasJugador > rondasGanadasRoshi){
@@ -233,7 +246,7 @@ void Combate::pantallaDerrota()
 
 void Combate::pantallaVictoria()
 {
-    //detenerTimersGlobales();
+    detenerTimersGlobales();
     rondasGanadasJugador++;
 
     victoriaPantalla = new QGraphicsRectItem(0, 0, 1080, 720);
@@ -259,11 +272,10 @@ void Combate::pantallaVictoria()
         delete victoriaTexto;
         victoriaTexto = nullptr;
 
-        limpiaObjetos();
-
         rondaActual++;
 
         if(rondaActual <= 3){
+            limpiaObjetos();
             iniciarCombate(personaje);
         }else{
             if(rondasGanadasJugador > rondasGanadasRoshi){
@@ -274,9 +286,7 @@ void Combate::pantallaVictoria()
                 mensajeFinal("EMPATE");
             }
         }
-
     });
-
 }
 
 void Combate::mensajeFinal(QString mensaje)
@@ -300,4 +310,37 @@ void Combate::mensajeFinal(QString mensaje)
         limpiaObjetos();
         emit combateTerminado(); // vuelve al menú principal
     });
+}
+
+void Combate::detenerTimersGlobales()
+{
+    if (personajeJugador) {
+        personajeJugador->desactivarTimers();
+        personajeJugador->setEnPausa(true);
+    }
+
+    if (timerTiempo) {
+        timerTiempo->stop();
+        timerTiempo->deleteLater();
+        timerTiempo = nullptr;
+    }
+
+    if (roshi) {
+        roshi->desactivarTimers();
+    }
+}
+
+void Combate::reanudarTimersGlobales()
+{
+    if (personajeJugador) {
+        personajeJugador->reanudarAnimacion();
+    }
+
+    if (timerTiempo) {
+        timerTiempo->start(1000);
+    }
+
+    if (roshi) {
+        roshi->reanudarAnimacion();
+    }
 }

@@ -69,6 +69,7 @@ private:
     int totalFramesDerecha;
 
     bool golpeRecibido;
+    int yaGolpeo = false;
 };
 
 #endif // GOKU_H

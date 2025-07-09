@@ -106,8 +106,8 @@ void Entrenamiento::iniciarNivel1(QString personajeSeleccionado, int vidasInicia
     avatar->setZValue(10);
 
     personajeActual->setPos(100, 492);
-    personajeActual->setVidasMaximas(vidasIniciales);
-    personajeActual->setContadorVidas(vidasIniciales);
+    personajeActual->setVidasMaximas(5);
+    personajeActual->setContadorVidas(5);
     personajeActual->inciarBarraVida(escenaEntrenamiento, 70, 15);
     personajeActual->setContadorPiedras(0);
     personajeActual->setFlag(QGraphicsItem::ItemIsFocusable);

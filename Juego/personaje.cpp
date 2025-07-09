@@ -11,7 +11,8 @@ Personaje::Personaje(QObject *parent)
     sonidoGolpeRecibidoGoku.setSource(QUrl("qrc:/sonido/golpeRgoku.wav"));
     sonidoPremio.setSource(QUrl("qrc:/sonido/premio.wav"));
     sonidoGolpeRecibidoRoshi.setSource(QUrl("qrc:/sonido/golpeRoshi.wav"));
-    sonidoGolpeRecibidoKrilin.setSource(QUrl("qrc:/sonido/golpeRoshi.wav"));
+    sonidoGolpeRecibidoKrilin.setSource(QUrl("qrc:/sonido/golpeRecibidoKrilin.wav"));
+    muerteGoku.setSource(QUrl("qrc:/sonido/muertegoku.wav"));
 
 }
 
@@ -128,12 +129,12 @@ void Personaje::eliminarBarraVida()
 
 void Personaje::setRival(Personaje *r)
 {
-    rival = r;
+    objetivo = r;
 }
 
 Personaje *Personaje::getRival() const
 {
-    return rival;
+    return objetivo;
 }
 
 void Personaje::reaccionGolpe()

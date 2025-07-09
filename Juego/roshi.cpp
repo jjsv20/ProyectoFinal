@@ -18,8 +18,6 @@ Roshi::Roshi(QObject *parent) : Personaje{parent}
 
     timerAtaqueRoshi = new QTimer(this);
     connect(timerAtaqueRoshi, &QTimer::timeout, this, &Roshi::atacarRoshi);
-
-    iniciarRoshi();
 }
 
 QRectF Roshi::boundingRect() const
@@ -35,7 +33,7 @@ void Roshi::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *
 void Roshi::iniciarRoshi()
 {
     timerMovimientoRoshi->start(50);
-    timerAtaqueRoshi->start(1500);
+    timerAtaqueRoshi->start(1000 + QRandomGenerator::global()->bounded(900));
 }
 
 void Roshi::reaccionGolpe()
@@ -70,14 +68,25 @@ void Roshi::reaccionGolpe()
             iniciarRoshi();
         }
     });
+}
 
+void Roshi::reiniciar()
+{
+    setEstaMuerto(false);
+    golpeRecibido = false;
+    atacando = false;
+    frameAtaque = 0;
+    coordenadaX = 0;
+    coordenadaY = 0;
+    actualizar();
+    detenerAnimacion();
 }
 
 void Roshi::moverRoshi()
 {
-    if (!rival) return;
+    if (!objetivo) return;
 
-    qreal distancia = rival->x() - x();
+    qreal distancia = objetivo->x() - x();
 
     if (qAbs(distancia) < 60) return;
 
@@ -95,34 +104,41 @@ void Roshi::moverRoshi()
 
 void Roshi::atacarRoshi()
 {
-    if (atacando || !rival) return;
+    if (atacando || !getRival() || getEstaMuerto()) return;
 
-    qreal distancia = qAbs(x() - rival->x());
+    qreal distancia = qAbs(x() - objetivo->x());
     if (distancia > 80) return;
 
     atacando = true;
     frameAtaque = 0;
+    bool yaGolpeo = false;
+
+    int tipoAtaque = QRandomGenerator::global()->bounded(2); // 0 o 1
+    int coordY_ataque = (tipoAtaque == 0) ? 100 : 200;
 
     QTimer *animacion = new QTimer(this);
     connect(animacion, &QTimer::timeout, this, [=]() mutable {
-        coordenadaY = 100;
+        coordenadaY = coordY_ataque;
         coordenadaX = frameAtaque * ancho;
         setPixmap(pixmap->copy(coordenadaX, coordenadaY, ancho, alto));
         frameAtaque++;
 
-        if (frameAtaque >= 5) {
+        if (!yaGolpeo && objetivo && collidesWithItem(objetivo)) {
+            objetivo->reaccionGolpe();
+            qDebug() << "Roshi golpeó";
+            yaGolpeo = true;
+        }
+
+        if (frameAtaque >= 6) {
             animacion->stop();
             animacion->deleteLater();
             atacando = false;
+            yaGolpeo = false;
             coordenadaX = 0;
             coordenadaY = 0;
             setPixmap(pixmap->copy(coordenadaX, coordenadaY, ancho, alto));
-            if (getRival()) {
-                getRival()->reaccionGolpe();
-            }
         }
     });
-
     animacion->start(60);
 }
 
@@ -133,4 +149,16 @@ void Roshi::actualizar()
     frameAtaque = (frameAtaque + 1) % 6;
     coordenadaX = frameAtaque * ancho;
     setPixmap(pixmap->copy(coordenadaX, coordenadaY, ancho, alto));
+}
+
+void Roshi::desactivarTimers()
+{
+    timerAtaqueRoshi->stop();
+    timerMovimientoRoshi->stop();
+}
+
+void Roshi::reanudarAnimacion()
+{
+    timerAtaqueRoshi->start(1500);
+    timerMovimientoRoshi->start(50);
 }

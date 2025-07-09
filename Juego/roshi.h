@@ -23,6 +23,7 @@ public:
 
     void iniciarRoshi();
     void reaccionGolpe() override;
+    void reiniciar() override;
 
     //void setRival(Personaje *rival);
 
@@ -30,6 +31,8 @@ public slots:
     void moverRoshi();
     void atacarRoshi();
     void actualizar();
+    void desactivarTimers() override;
+    void reanudarAnimacion() override;
 
 private:
     QTimer *timerMovimientoRoshi;
@@ -38,6 +41,7 @@ private:
     int frameAtaque, ancho, alto, coordenadaX, coordenadaY;
     bool atacando;
     bool golpeRecibido;
+
     //Personaje *rival;
 
 

@@ -31,6 +31,9 @@ public:
 
     void mensajeFinal(QString mensaje);
 
+    void detenerTimersGlobales();
+    void reanudarTimersGlobales();
+
 public slots:
     void cuentaRegresiva();
     void limpiaObjetos();

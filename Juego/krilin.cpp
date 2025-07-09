@@ -137,6 +137,7 @@ void Krilin::colisionRocas()
         Objetos *r = dynamic_cast<Objetos*>(i);
         if(r && r->getTipo() == "roca"){
             if(this->collidesWithItem(r)){
+                sonidoGolpeRecibidoKrilin.play();
                 qDebug() << "Colision roca";
                 perderVida();
                 break;

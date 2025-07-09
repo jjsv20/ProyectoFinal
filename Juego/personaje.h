@@ -78,14 +78,14 @@ protected:
 
     QSoundEffect sonidoSalto;
     QSoundEffect sonidoAterrizaje;
-    QSoundEffect sonidoGolpeRecibidoGoku;
+    QSoundEffect sonidoGolpeRecibidoGoku, muerteGoku;
     QSoundEffect sonidoGolpeRecibidoKrilin;
     QSoundEffect sonidoPremio;
     QSoundEffect sonidoGolpeRecibidoRoshi;
 
     QGraphicsRectItem* barraVida = nullptr;
     QGraphicsScene* escenaActual = nullptr;
-    Personaje *rival = nullptr;
+    Personaje *objetivo = nullptr;
 
     int posicionBarraX, posicionBarraY;
 };
