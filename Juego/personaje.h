@@ -53,6 +53,8 @@ public:
 
     virtual void reaccionGolpe();
 
+    virtual void spriteVictoria();
+
 signals:
     void partidaCompletada();
     void finalPartida();
@@ -76,12 +78,12 @@ protected:
     bool puno = false;
     bool patada = false;
 
-    QSoundEffect sonidoSalto;
+    QSoundEffect sonidoSalto, saltoKrilin;
     QSoundEffect sonidoAterrizaje;
     QSoundEffect sonidoGolpeRecibidoGoku, muerteGoku;
-    QSoundEffect sonidoGolpeRecibidoKrilin;
+    QSoundEffect sonidoGolpeRecibidoKrilin, muerteKrilin;
     QSoundEffect sonidoPremio;
-    QSoundEffect sonidoGolpeRecibidoRoshi;
+    QSoundEffect sonidoGolpeRecibidoRoshi, muerteRoshi;
 
     QGraphicsRectItem* barraVida = nullptr;
     QGraphicsScene* escenaActual = nullptr;

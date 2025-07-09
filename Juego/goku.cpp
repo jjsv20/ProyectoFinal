@@ -131,8 +131,21 @@ void Goku::colisionPiedras()
                     puntos->setPlainText("x " + QString::number(contadorPiedras) + "/10");
                 }
             }
-            if (contadorPiedras == 4 && !getNivelCompletado()) {
+            if (contadorPiedras == 10 && !getNivelCompletado()) {
                 QTimer::singleShot(1500, this, [=]() {
+                    desactivarTimers();
+                    frameActual = 0;
+                    QTimer* animacion = new QTimer(this);
+                    connect(animacion, &QTimer::timeout, this, [=]() mutable {
+                        spriteVictoria();
+                        if (frameActual >= 7) {
+                            animacion->stop();
+                            animacion->deleteLater();
+                            emit partidaCompletada();
+                            qDebug() << "Emit partidaCompletada por recolectar piedras";
+                        }
+                    });
+                    animacion->start(100);
                     emit partidaCompletada();
                     qDebug() << "Emit partidaCompletada por recolectar piedras";
                     qDebug() << "Nivel completado:" << this->nivelCompletado;
@@ -311,6 +324,13 @@ void Goku::reanudarAnimacion()
     caminar->start(40);
     saltar->start(40);
     timerColision->start(50);
+}
+
+void Goku::spriteVictoria()
+{
+    coordenadaY = 700;
+    coordenadaX = frameActual * ancho;
+    setPixmap(pixmap->copy(coordenadaX, coordenadaY, ancho, alto));
 }
 
 

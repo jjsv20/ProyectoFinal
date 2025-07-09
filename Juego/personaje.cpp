@@ -13,6 +13,9 @@ Personaje::Personaje(QObject *parent)
     sonidoGolpeRecibidoRoshi.setSource(QUrl("qrc:/sonido/golpeRoshi.wav"));
     sonidoGolpeRecibidoKrilin.setSource(QUrl("qrc:/sonido/golpeRecibidoKrilin.wav"));
     muerteGoku.setSource(QUrl("qrc:/sonido/muertegoku.wav"));
+    muerteRoshi.setSource(QUrl("qrc:/sonido/muerteRoshi.wav"));
+    muerteKrilin.setSource(QUrl("qrc:/sonido/muerteKrilin.wav"));
+    saltoKrilin.setSource(QUrl("qrc:/sonido/salyoKrilin.wav"));
 
 }
 
@@ -138,6 +141,11 @@ Personaje *Personaje::getRival() const
 }
 
 void Personaje::reaccionGolpe()
+{
+
+}
+
+void Personaje::spriteVictoria()
 {
 
 }

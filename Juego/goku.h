@@ -36,6 +36,7 @@ public slots:
     void desactivarTimers() override;
     void reanudarAnimacion() override;
     void setPausa(bool estado) { enPausa = estado; }
+    void spriteVictoria() override;
 
 /*/signals:
     void moverFondoSignal(int dx);

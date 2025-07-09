@@ -29,6 +29,9 @@ public slots:
     void volverASeleccion();
     void colisionPiedras();
     void colisionRocas();
+    void animarPuno();
+    void animarPatada();
+    void reaccionGolpe() override;
     void desactivarTimers() override;
     void reanudarAnimacion() override;
     void setPausa(bool estado) { enPausa = estado; }
@@ -42,7 +45,7 @@ private:
     void moverIzquierda();
     void moverArriba();
 
-    QTimer *seleccion, *caminar, *saltar, *timerColision;
+    QTimer *seleccion, *caminar, *saltar, *timerColision, *timerPuno, *timerPatada;
     QPixmap *pixmap;
     QGraphicsPixmapItem *krilinSeleccion;
 
@@ -54,6 +57,9 @@ private:
 
     int frameActual = 0;
     int totalFramesDerecha;
+
+    bool golpeRecibido;
+    int yaGolpeo = false;
 };
 
 #endif // KRILIN_H

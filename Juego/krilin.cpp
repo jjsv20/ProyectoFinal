@@ -30,6 +30,12 @@ Krilin::Krilin(QObject *parent)
     connect(timerColision, &QTimer::timeout, this, &Krilin::colisionRocas);
     timerColision->start(50);
 
+    timerPuno = new QTimer(this);
+    connect(timerPuno, &QTimer::timeout, this, &Krilin::animarPuno);
+
+    timerPatada = new QTimer(this);
+    connect(timerPatada, &QTimer::timeout, this, &Krilin::animarPatada);
+
     moviendoDerecha = false;
     moviendoIzquierda = false;
     saltando = false;
@@ -118,7 +124,7 @@ void Krilin::colisionPiedras()
                     puntos->setPlainText("x " + QString::number(contadorPiedras));
                 }
             }
-            if (contadorPiedras >= 10 && !getNivelCompletado()) {
+            if (contadorPiedras == 10 && !getNivelCompletado()) {
                 QTimer::singleShot(1500, this, [=]() {
                     emit partidaCompletada();
                     qDebug() << "Emit partidaCompletada por recolectar piedras";
@@ -146,20 +152,124 @@ void Krilin::colisionRocas()
     }
 }
 
+void Krilin::animarPuno()
+{
+    if (!pixmap || !timerPuno) return;
+
+    coordenadaY = 500;
+    coordenadaX = frameActual * ancho;
+    setPixmap(pixmap->copy(coordenadaX, coordenadaY, ancho, alto));
+
+    if (!yaGolpeo) {
+        const auto items = scene()->items();
+        for (auto item : items) {
+            Roshi* r = dynamic_cast<Roshi*>(item);
+            if (r && this->collidesWithItem(r)) {
+                r->reaccionGolpe();
+                yaGolpeo = true;
+                break;
+            }
+        }
+    }
+
+    frameActual++;
+
+    if (frameActual >= 6) {
+        timerPuno->stop();
+        puno = false;
+        frameActual = 0;
+        volverASeleccion();
+        yaGolpeo = false;
+    }
+}
+
+void Krilin::reaccionGolpe()
+{
+    if (getEstaMuerto() || golpeRecibido) return;
+
+    qDebug() << "Krilin recibio golep";
+    golpeRecibido = true;
+    sonidoGolpeRecibidoKrilin.play();
+    caminar->stop();
+
+    coordenadaY = 600;
+    coordenadaX = 0;
+    setPixmap(pixmap->copy(coordenadaX, coordenadaY, ancho, alto));
+    setX(x() - 50);
+    setOpacity(0.5);
+
+    if (getContadorVidas() > 0) {
+        setContadorVidas(getContadorVidas() - 1);
+        actualizarBarraVida();
+        qDebug() << "Vidas restantes: " << getContadorVidas();
+    }
+
+    if (getContadorVidas() <= 0) {
+        setEstaMuerto(true);
+        golpeRecibido = false;
+        muerteGoku.play();
+        detenerAnimacion();
+        qDebug() << "Krilin ha sido derrotado";
+        emit finalPartida();
+        return;
+    }
+
+    QTimer::singleShot(400, this, [this]() {
+        setOpacity(1.0);
+        golpeRecibido = false;
+        if (moviendoDerecha || moviendoIzquierda) {
+            caminar->start(40);
+        } else {
+            volverASeleccion();
+        }
+    });
+}
+
+void Krilin::animarPatada()
+{
+    if (!pixmap || !timerPatada) return;
+
+    coordenadaY = 400;
+    coordenadaX = frameActual * ancho;
+    setPixmap(pixmap->copy(coordenadaX, coordenadaY, ancho, alto));
+
+    if (!yaGolpeo && getRival() && collidesWithItem(getRival())) {
+        getRival()->reaccionGolpe();
+        yaGolpeo = true;
+        qDebug() << "Goku golpeó";
+    }
+
+
+    frameActual++;
+
+    if (frameActual >= 6) {
+        timerPatada->stop();
+        patada = false;
+        frameActual = 0;
+        volverASeleccion();
+        yaGolpeo = false;
+    }
+}
+
 void Krilin::perderVida()
 {
     if (getEstaMuerto()) return;
+
     int vidasActuales = getContadorVidas();
     setEstaMuerto(true);
+
     if (vidasActuales > 0) {
         setContadorVidas(vidasActuales - 1);
         qDebug() << "Perdió una vida. Vidas restantes:" << getContadorVidas();
     }
+
     if (getContadorVidas() == 0) {
         qDebug() << "¡Game Over!";
+        muerteKrilin.play();
         detenerAnimacion();
         emit finalPartida();
     }
+
     QTimer::singleShot(1500, this, [=]() {
         setEstaMuerto(false);
         qDebug() << "Ya puede volver a recibir daño.";
@@ -172,11 +282,15 @@ void Krilin::desactivarTimers()
     saltar->stop();
     seleccion->stop();
     timerColision->stop();
+    timerPuno->stop();
+    timerPatada->stop();
 }
 
 void Krilin::reanudarAnimacion()
 {
     iniciarAnimacion();
+    caminar->start(40);
+    saltar->start(40);
     timerColision->start(50);
 }
 
@@ -186,6 +300,13 @@ void Krilin::reiniciar()
     iniciarAnimacion();
     actualizar();
     volverASeleccion();
+    puno = false;
+    patada = false;
+    saltando = false;
+    moviendoDerecha = false;
+    moviendoIzquierda = false;
+    golpeRecibido = false;
+    frameActual = 0;
 }
 
 void Krilin::volverASeleccion()
@@ -197,12 +318,16 @@ void Krilin::volverASeleccion()
 
 void Krilin::iniciarAnimacion()
 {
-    seleccion->start(100);
+    seleccion->start(120);
+    timerColision->start(50);
+    caminar->start(40);
 }
 
 void Krilin::detenerAnimacion()
 {
     seleccion->stop();
+    timerColision->stop();
+    caminar->stop();
 }
 
 void Krilin::keyReleaseEvent(QKeyEvent *event)
@@ -246,10 +371,23 @@ void Krilin::keyPressEvent(QKeyEvent *event)
             }else {
                 velocidadX = 0;
             }
+            saltoKrilin.play();
             caminar->stop();
             velocidadY = -40;
             saltando = true;
-            saltar->start(30);
+            saltar->start(40);
+        }
+    }else if (event->key() == Qt::Key_Z && !event->isAutoRepeat()) {
+        if (!patada && !puno && !saltando) {
+            patada = true;
+            frameActual = 0;
+            timerPatada->start(60);
+        }
+    } else if (event->key() == Qt::Key_X && !event->isAutoRepeat()) {
+        if (!puno && !patada && !saltando) {
+            puno = true;
+            frameActual = 0;
+            timerPuno->start(60);
         }
     }
 }

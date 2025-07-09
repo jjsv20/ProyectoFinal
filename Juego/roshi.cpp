@@ -55,6 +55,7 @@ void Roshi::reaccionGolpe()
     }
 
     if (getContadorVidas() <= 0) {
+        muerteRoshi.play();
         setEstaMuerto(true);
         detenerAnimacion();
         qDebug() << "¡Roshi ha sido derrotado!";

@@ -73,7 +73,7 @@ void Entrenamiento::iniciarNivel1(QString personajeSeleccionado, int vidasInicia
         qDebug() << "Goku creado correctamente";
     } else if(personaje == "Krilin"){
         personajeActual = new Krilin();
-        personajeActual->setScale(1.5);
+        personajeActual->setScale(1.1);
         qDebug() << "Krilin creado correctamente";
     }
 

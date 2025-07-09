@@ -25,8 +25,6 @@ public:
     void reaccionGolpe() override;
     void reiniciar() override;
 
-    //void setRival(Personaje *rival);
-
 public slots:
     void moverRoshi();
     void atacarRoshi();
@@ -41,9 +39,6 @@ private:
     int frameAtaque, ancho, alto, coordenadaX, coordenadaY;
     bool atacando;
     bool golpeRecibido;
-
-    //Personaje *rival;
-
 
 signals:
 };
