@@ -25,6 +25,7 @@ Entrenamiento::Entrenamiento(QWidget *parent)
     personajeActual = nullptr;
     timerPiedras = nullptr;
     timerRocas = nullptr;
+    timerAves = nullptr;
     derrotaPantalla = nullptr;
     derrotaTexto = nullptr;
     botonReiniciar = nullptr;
@@ -106,8 +107,8 @@ void Entrenamiento::iniciarNivel1(QString personajeSeleccionado, int vidasInicia
     avatar->setZValue(10);
 
     personajeActual->setPos(100, 492);
-    personajeActual->setVidasMaximas(5);
-    personajeActual->setContadorVidas(5);
+    personajeActual->setVidasMaximas(10);
+    personajeActual->setContadorVidas(10);
     personajeActual->inciarBarraVida(escenaEntrenamiento, 70, 15, false);
     personajeActual->setContadorPiedras(0);
     personajeActual->setFlag(QGraphicsItem::ItemIsFocusable);
@@ -126,6 +127,10 @@ void Entrenamiento::iniciarNivel1(QString personajeSeleccionado, int vidasInicia
     timerRocas = new QTimer(this);
     connect(timerRocas, &QTimer::timeout, this, &Entrenamiento::crearRocas);
     timerRocas->start(2000);
+
+    timerAves = new QTimer(this);
+    connect(timerAves, &QTimer::timeout, this, &Entrenamiento::crearAves);
+    timerAves->start(1000);
 
     tiempo = 60;
     textoTiempo = escenaEntrenamiento->addText("Tiempo: 60", QFont("Arial", 24));
@@ -247,6 +252,19 @@ void Entrenamiento::crearRocas()
     }
 }
 
+void Entrenamiento::crearAves()
+{
+    if(aves.count() < 2){
+        Objetos *a = new Objetos("ave", this);
+        escenaEntrenamiento->addItem(a);
+        aves.append(a);
+
+        connect(a, &Objetos::eliminarAve, this, [=](Objetos *ave){
+            aves.removeOne(ave);
+        });
+    }
+}
+
 void Entrenamiento::pantallaDerrota() {
     ui->pausa->hide();
     detenerTimersGlobales();
@@ -337,6 +355,11 @@ void Entrenamiento::detenerTimersGlobales()
         if(r) r->detener();
     }
 
+    if (timerAves)timerAves->stop();
+    for (Objetos* a : aves) {
+        if(a) a->detener();
+    }
+
     if (timerTiempo) {
         timerTiempo->stop();
         timerTiempo->deleteLater();
@@ -363,6 +386,11 @@ void Entrenamiento::reanudarTimersGlobales()
         if(r) r->reanudar();
     }
 
+    if (timerAves)timerAves->start(2000);
+    for (Objetos* a : aves) {
+        if(a) a->reanudar();
+    }
+
     if (timerTiempo) timerTiempo->start(1000);
 }
 
@@ -383,6 +411,14 @@ void Entrenamiento::limpiaObjetos()
         }
     }
     rocas.clear();
+
+    for (Objetos* a : aves) {
+        if (a && a->scene()) {
+            escenaEntrenamiento->removeItem(a);
+            a->deleteLater();
+        }
+    }
+    aves.clear();
 
     if (personajeActual) {
         personajeActual->desactivarTimers();

@@ -170,6 +170,17 @@ void Goku::colisionRocas()
             }
         }
     }
+    for(auto i : items){
+        Objetos *a = dynamic_cast<Objetos*>(i);
+        if(a && a->getTipo() == "ave"){
+            if(this->collidesWithItem(a)){
+                sonidoGolpeRecibidoGoku.play();
+                qDebug() << "Colision ave";
+                perderVida();
+                break;
+            }
+        }
+    }
 }
 
 void Goku::animarPuno()

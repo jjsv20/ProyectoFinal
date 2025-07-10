@@ -31,6 +31,7 @@ public slots:
     void moverFondo(int dx);
     void crearPiedras();
     void crearRocas();
+    void crearAves();
     void pantallaDerrota();
     void pantallaVictoria();
     void detenerTimersGlobales();
@@ -56,6 +57,9 @@ private:
     QTimer *timerRocas;
     int nRocas;
     QList<Objetos *> rocas;
+    int nAves;
+    QList<Objetos *> aves;
+    QTimer *timerAves;
 
     int cantidadPiedras;
     int widthFondo;

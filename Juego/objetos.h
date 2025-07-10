@@ -18,6 +18,7 @@ public:
 signals:
     void eliminarRoca(Objetos *rocas);
     void eliminarPiedra(Objetos *piedra);
+    void eliminarAve(Objetos *ave);
 
 public slots:
     void moverObjeto();
@@ -25,6 +26,13 @@ public slots:
 private:
     QTimer *timer;
     QString tipo;
+
+    QPixmap *pixmap;
+    int frameActual = 0;
+    int anchoFrame = 60;
+    int altoFrame = 60;
+    int contadorMovimiento = 0;
+    int contadorAnimacion = 0;
 };
 
 #endif // OBJETOS_H
