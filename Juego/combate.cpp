@@ -61,6 +61,11 @@ void Combate::iniciarCombate(QString personajeSeleccionado)
     avatar->setPos(20, 10);
     avatar->setZValue(10);
 
+    QPixmap avatarRoshiPixmap(":/imagenes/avatarJackie.png");
+    avatarRoshi = escenaCombate->addPixmap(avatarRoshiPixmap.scaled(50, 50));
+    avatarRoshi->setPos(1000, 10);
+    avatarRoshi->setZValue(10);
+
     if (personaje == "Goku") {
         personajeJugador = new Goku();
         personajeJugador->setScale(1.4);
@@ -95,8 +100,8 @@ void Combate::iniciarCombate(QString personajeSeleccionado)
     escenaCombate->addItem(personajeJugador);
     escenaCombate->addItem(roshi);
 
-    roshi->inciarBarraVida(escenaCombate, 750, 15);
-    personajeJugador->inciarBarraVida(escenaCombate, 70, 15);
+    roshi->inciarBarraVida(escenaCombate, 790, 15, true);
+    personajeJugador->inciarBarraVida(escenaCombate, 70, 15, false);
 
     personajeJugador->setZValue(1);
     roshi->setZValue(1);
@@ -114,7 +119,7 @@ void Combate::iniciarCombate(QString personajeSeleccionado)
     tiempo = 30;
     textoTiempo = escenaCombate->addText("Tiempo: 30", QFont("Arial", 24));
     textoTiempo->setDefaultTextColor(Qt::red);
-    textoTiempo->setPos(900, 20);
+    textoTiempo->setPos(500, 20);
 
     timerTiempo = new QTimer(this);
     connect(timerTiempo, &QTimer::timeout, this, &Combate::cuentaRegresiva);

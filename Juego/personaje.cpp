@@ -90,19 +90,22 @@ int Personaje::getVidasMaximas() const
     return vidasMaximas;
 }
 
-void Personaje::inciarBarraVida(QGraphicsScene *escena, int x, int y)
+void Personaje::inciarBarraVida(QGraphicsScene *escena, int x, int y, bool invertida)
 {
     escenaActual = escena;
     posicionBarraX = x;
     posicionBarraY = y;
+    barraInvertida = invertida;
 
     if (barraVida) {
         escena->removeItem(barraVida);
         delete barraVida;
         barraVida = nullptr;
     }
+
     barraVida = escena->addRect(x, y, 200, 20, QPen(Qt::black), QBrush(Qt::green));
     barraVida->setZValue(1);
+
     actualizarBarraVida();
 }
 
@@ -111,7 +114,14 @@ void Personaje::actualizarBarraVida()
     if (!barraVida || vidasMaximas <= 0) return;
 
     qreal porcentaje = static_cast<qreal>(contadorVidas) / vidasMaximas;
-    barraVida->setRect(posicionBarraX,posicionBarraY, 200 * porcentaje, 20);
+    qreal nuevaAncho = 200 * porcentaje;
+
+    if (barraInvertida) {
+        qreal nuevoX = posicionBarraX + (200 - nuevaAncho);
+        barraVida->setRect(nuevoX, posicionBarraY, nuevaAncho, 20);
+    } else {
+        barraVida->setRect(posicionBarraX, posicionBarraY, nuevaAncho, 20);
+    }
 
     if (porcentaje > 0.5)
         barraVida->setBrush(QBrush(Qt::green));

@@ -66,7 +66,7 @@ private:
     QGraphicsRectItem* victoriaPantalla;
     QGraphicsTextItem* victoriaTexto;
 
-    QGraphicsPixmapItem *avatar;
+    QGraphicsPixmapItem *avatar, *avatarRoshi;
 
     int rondasGanadasJugador = 0;
     int rondasGanadasRoshi = 0;

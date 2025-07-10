@@ -45,7 +45,7 @@ public:
     virtual int getVidasMaximas() const;
 
     virtual void actualizarBarraVida();
-    virtual void inciarBarraVida(QGraphicsScene *escena, int x, int y);
+    virtual void inciarBarraVida(QGraphicsScene *escena, int x, int y, bool invertida);
     virtual void eliminarBarraVida();
 
     virtual void setRival(Personaje *r);
@@ -89,7 +89,7 @@ protected:
     QGraphicsScene* escenaActual = nullptr;
     Personaje *objetivo = nullptr;
 
-    int posicionBarraX, posicionBarraY;
+    int posicionBarraX, posicionBarraY, barraInvertida;
 };
 
 #endif // PERSONAJE_H
