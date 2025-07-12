@@ -55,6 +55,9 @@ public:
 
     virtual void spriteVictoria();
 
+    void setEnCombate(bool estado);
+    bool getEnCombate() const;
+
 signals:
     void partidaCompletada();
     void finalPartida();
@@ -90,6 +93,8 @@ protected:
     Personaje *objetivo = nullptr;
 
     int posicionBarraX, posicionBarraY, barraInvertida;
+
+    bool enCombate = false;
 };
 
 #endif // PERSONAJE_H

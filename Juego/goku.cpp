@@ -66,7 +66,11 @@ void Goku::animar()
         frameActual = (frameActual + 1) % totalFramesDerecha;
         coordenadaX = frameActual * ancho;
         setPixmap(pixmap->copy(coordenadaX, coordenadaY, ancho, alto));
-        //setPos(x() + 10, y());
+        if(getEnCombate()){
+            qreal nuevaX = x() + 10;
+            if (nuevaX > 1080 - ancho) nuevaX = 1080 - ancho; // Límite derecho
+            setX(nuevaX);
+        }
         emit moverFondoSignal(20);
     } else if (moviendoIzquierda) {
         coordenadaY = 200;
@@ -85,7 +89,10 @@ void Goku::animarSalto()
     frameActual = (frameActual + 1) % 9;
     coordenadaX = frameActual * 70;
     setPixmap(pixmap->copy(coordenadaX, coordenadaY, 70, alto));
-    setX(x() + velocidadX);
+    qreal nuevaX = x() + velocidadX;
+    if (nuevaX < 0) nuevaX = 0;
+    if (nuevaX > 1080 - ancho) nuevaX = 1080 - ancho;
+    setX(nuevaX);
     setY(y() + velocidadY);
     velocidadY += gravedad;
     //sonidoSalto.play();
@@ -102,7 +109,6 @@ void Goku::animarSalto()
         qDebug() << "Aterrizó en el suelo";
         return;
     }
-
 }
 
 void Goku::actualizar()

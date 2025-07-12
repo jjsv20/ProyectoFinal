@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
     w.show();/*/
     Combate *pantallaCombate = new Combate();
     pantallaCombate->show();
-    pantallaCombate->iniciarCombate("Krilin");/*/
+    pantallaCombate->iniciarCombate("Goku");/*/
 
     return a.exec();
 }

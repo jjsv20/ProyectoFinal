@@ -40,9 +40,6 @@ public slots:
     void mostrarTutorial();
     void cuentaRegresiva();
 
-protected:
-    void keyPressEvent(QKeyEvent *event);
-
 signals:
     void volverSeleccionar();
     void entrenamientoTerminado(QString personajeSeleccionado, int vidasIniciales, int nivel, int derrotas);

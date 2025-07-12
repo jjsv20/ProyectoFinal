@@ -265,7 +265,6 @@ void Krilin::animarPatada()
         qDebug() << "Goku golpeó";
     }
 
-
     frameActual++;
 
     if (frameActual >= 6) {

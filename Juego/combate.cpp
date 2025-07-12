@@ -7,13 +7,14 @@ Combate::Combate(QWidget *parent)
 {
     ui->setupUi(this);
 
-
     escenaCombate = new QGraphicsScene(this);
     escenaCombate->setSceneRect(0, 0, 1080, 720);
     ui->graphicsView->setScene(escenaCombate);
     ui->graphicsView->setGeometry(this->rect());
     ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->graphicsView->setFocusPolicy(Qt::NoFocus);
+    ui->graphicsView->viewport()->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
     personajeJugador = nullptr;
     roshi = nullptr;
@@ -23,10 +24,25 @@ Combate::Combate(QWidget *parent)
 
 }
 
+
+
 void Combate::iniciarCombate(QString personajeSeleccionado)
 {
     limpiaObjetos();
     qDebug() << "¡Combate iniciado!";
+
+    personaje = personajeSeleccionado;
+
+    if (!tutorialMostrado) {
+        iniciarCombateTuto();
+    }else{
+        iniciarNivel2(personajeSeleccionado);
+    }
+}
+
+void Combate::iniciarNivel2(QString personajeSeleccionado)
+{
+    limpiaObjetos();
 
     personaje = personajeSeleccionado;
 
@@ -41,9 +57,9 @@ void Combate::iniciarCombate(QString personajeSeleccionado)
     QGraphicsPixmapItem* fondo = new QGraphicsPixmapItem(QPixmap(":/imagenes/combate-2.png"));
     escenaCombate->addItem(fondo);
 
-    QGraphicsTextItem* textoRonda = escenaCombate->addText("Ronda " + QString::number(rondaActual), QFont("Arial", 28));
-    textoRonda->setDefaultTextColor(Qt::white);
-    textoRonda->setPos(480, 10);
+    QGraphicsTextItem* textoRonda = escenaCombate->addText("ROUND " + QString::number(rondaActual), QFont("Arial", 28));
+    textoRonda->setDefaultTextColor(Qt::black);
+    textoRonda->setPos(470, 80);
     textoRonda->setZValue(15);
     QTimer::singleShot(2000, this, [=]() {
         escenaCombate->removeItem(textoRonda);
@@ -81,9 +97,10 @@ void Combate::iniciarCombate(QString personajeSeleccionado)
         return;
     }
 
-    personajeJugador->setPos(100, 492);
+    escenaCombate->addItem(personajeJugador);
     personajeJugador->setFlag(QGraphicsItem::ItemIsFocusable);
-    personajeJugador->setFocus();
+    personajeJugador->setFocus(Qt::ActiveWindowFocusReason);
+    personajeJugador->setPos(100, 492);
 
     roshi = new Roshi();
     roshi->setPos(800, 492);
@@ -97,7 +114,6 @@ void Combate::iniciarCombate(QString personajeSeleccionado)
     roshi->setVidasMaximas(20);
     roshi->setContadorVidas(20);
 
-    escenaCombate->addItem(personajeJugador);
     escenaCombate->addItem(roshi);
 
     roshi->inciarBarraVida(escenaCombate, 790, 15, true);
@@ -112,6 +128,7 @@ void Combate::iniciarCombate(QString personajeSeleccionado)
     connect(personajeJugador, &Personaje::finalPartida, this, &Combate::pantallaDerrota);
     connect(roshi, &Personaje::finalPartida, this, &Combate::pantallaVictoria);
 
+    personajeJugador->setEnCombate(true);
     personajeJugador->iniciarAnimacion();
     personajeJugador->setEstaMuerto(false);
     roshi->iniciarRoshi();
@@ -119,11 +136,65 @@ void Combate::iniciarCombate(QString personajeSeleccionado)
     tiempo = 30;
     textoTiempo = escenaCombate->addText("Tiempo: 30", QFont("Arial", 24));
     textoTiempo->setDefaultTextColor(Qt::red);
-    textoTiempo->setPos(500, 20);
+    textoTiempo->setPos(460, 30);
 
     timerTiempo = new QTimer(this);
     connect(timerTiempo, &QTimer::timeout, this, &Combate::cuentaRegresiva);
     timerTiempo->start(1000);
+
+    ui->pausa->show();
+    ui->pausa->setEnabled(true);
+}
+
+void Combate::iniciarCombateTuto()
+{
+    ui->pausa->hide();
+    detenerTimersGlobales();
+    if (personajeJugador) {
+        personajeJugador->clearFocus();
+    }
+
+    QGraphicsRectItem* fondoTuto = new QGraphicsRectItem(0, 0, 1080, 720);
+    fondoTuto->setBrush(QColor(0, 0, 0, 150));
+    fondoTuto->setZValue(20);
+    escenaCombate->addItem(fondoTuto);
+
+    QGraphicsTextItem* texto = new QGraphicsTextItem(
+        "🥊 CONTROLES DE COMBATE\n"
+        "➡️ Z: Patada\n"
+        "➡️ X: Puño\n"
+        "➡️ Barra espaciadora: Saltar\n"
+        "\n"
+        "🎯 OBJETIVO\n"
+        "✅ Derrota al oponente\n"
+        "❌ Evita quedarte sin vidas\n"
+        );
+    texto->setFont(QFont("Arial", 20));
+    texto->setDefaultTextColor(Qt::white);
+    QRectF rect = texto->boundingRect();
+    texto->setPos((1080 - rect.width()) / 2, 130);
+    texto->setZValue(101);
+    escenaCombate->addItem(texto);
+
+    QTimer::singleShot(7000, this, [=]() {
+        if (fondoTuto && fondoTuto->scene())
+            escenaCombate->removeItem(fondoTuto);
+        delete fondoTuto;
+
+        if (texto && texto->scene())
+            escenaCombate->removeItem(texto);
+        delete texto;
+
+        tutorialMostrado = true;
+        iniciarNivel2(personaje);
+
+        QTimer::singleShot(100, this, [=]() {
+            if (personajeJugador) {
+                ui->graphicsView->setFocus();
+                qDebug() << "Focus después del tutorial de combate: " << personajeJugador->hasFocus();
+            }
+        });
+    });
 }
 
 Combate::~Combate()
@@ -152,7 +223,7 @@ void Combate::cuentaRegresiva()
             pantallaDerrota();
         }else{
             QGraphicsTextItem* empate = escenaCombate->addText("EMPATE", QFont("Arial", 28));
-            empate->setDefaultTextColor(Qt::yellow);
+            empate->setDefaultTextColor(Qt::black);
             empate->setPos(480, 300);
             empate->setZValue(15);
 
@@ -176,10 +247,6 @@ void Combate::limpiaObjetos()
         delete timerTiempo;
         timerTiempo = nullptr;
     }
-
-    /*/if (escenaCombate) {
-        escenaCombate->clear();
-    }/*/
 
     if (personajeJugador) {
         personajeJugador->desactivarTimers();
@@ -326,8 +393,6 @@ void Combate::detenerTimersGlobales()
 
     if (timerTiempo) {
         timerTiempo->stop();
-        timerTiempo->deleteLater();
-        timerTiempo = nullptr;
     }
 
     if (roshi) {
@@ -339,6 +404,8 @@ void Combate::reanudarTimersGlobales()
 {
     if (personajeJugador) {
         personajeJugador->reanudarAnimacion();
+        personajeJugador->setEnPausa(false);
+        personajeJugador->setFocus(Qt::OtherFocusReason);
     }
 
     if (timerTiempo) {
@@ -349,3 +416,62 @@ void Combate::reanudarTimersGlobales()
         roshi->reanudarAnimacion();
     }
 }
+
+void Combate::on_pausa_clicked()
+{
+    ui->pausa->hide();
+    detenerTimersGlobales();
+    QGraphicsRectItem* panelPausa = new QGraphicsRectItem(0, 0, 1080, 720);
+    panelPausa->setBrush(QColor(0, 0, 0, 150));
+    panelPausa->setZValue(20);
+    escenaCombate->addItem(panelPausa);
+
+    QGraphicsTextItem* titulo = new QGraphicsTextItem("PAUSA");
+    titulo->setDefaultTextColor(Qt::white);
+    titulo->setFont(QFont("Arial", 32, QFont::Bold));
+    titulo->setZValue(21);
+    titulo->setPos(450, 200);
+    escenaCombate->addItem(titulo);
+
+    QPushButton* botonReanudar = new QPushButton("Reanudar", this);
+    botonReanudar->setFocusPolicy(Qt::NoFocus);
+
+    botonReanudar->setGeometry(450, 300, 180, 40);
+    botonReanudar->raise();
+    botonReanudar->show();
+
+    QPushButton* botonMenu = new QPushButton("Volver al Menú", this);
+    botonMenu->setGeometry(450, 360, 180, 40);
+    botonMenu->raise();
+    botonMenu->show();
+
+    QPushButton* botonSalir = new QPushButton("Salir", this);
+    botonSalir->setGeometry(450, 420, 180, 40);
+    botonSalir->raise();
+    botonSalir->show();
+
+    connect(botonReanudar, &QPushButton::clicked, this, [=]() {
+        escenaCombate->removeItem(panelPausa);
+        delete titulo;
+        botonReanudar->deleteLater();
+        botonMenu->deleteLater();
+        botonSalir->deleteLater();
+        reanudarTimersGlobales();
+        ui->pausa->show();
+        ui->pausa->setEnabled(true);
+        QTimer::singleShot(100, this, [=]() {
+            if (personajeJugador) {
+                ui->graphicsView->setFocus();
+                qDebug() << "Focus después de reanudar: " << personajeJugador->hasFocus();
+            }
+        });
+    });
+    connect(botonMenu, &QPushButton::clicked, this, [=]() {
+        emit volverSeleccionar();
+        QTimer::singleShot(0, this, &Entrenamiento::close);
+    });
+    connect(botonSalir, &QPushButton::clicked, this, []() {
+        qApp->quit();
+    });
+}
+

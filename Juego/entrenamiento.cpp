@@ -18,7 +18,6 @@ Entrenamiento::Entrenamiento(QWidget *parent)
     ui->graphicsView->setFocusPolicy(Qt::NoFocus);
     ui->graphicsView->viewport()->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-
     texto = nullptr;
     vidasT = nullptr;
     fondoE = nullptr;
@@ -118,6 +117,7 @@ void Entrenamiento::iniciarNivel1(QString personajeSeleccionado, int vidasInicia
     personajeActual->setContadorVidas(10);
     personajeActual->inciarBarraVida(escenaEntrenamiento, 70, 15, false);
     personajeActual->setContadorPiedras(0);
+    personajeActual->setEnCombate(false);
     personajeActual->iniciarAnimacion();
     personajeActual->setEstaMuerto(false);
 
@@ -169,6 +169,7 @@ void Entrenamiento::iniciarNivelTuto(QString personajeSeleccionado, int nivel)
 
 void Entrenamiento::mostrarTutorial()
 {
+    ui->pausa->hide();
     detenerTimersGlobales();
     if(personajeActual){
         personajeActual->clearFocus();
@@ -189,7 +190,7 @@ void Entrenamiento::mostrarTutorial()
         "⏱️ Tienes 60 segundos\n"
         "\n"
         "⚠️ CUIDADO\n"
-        "🪨 Esquiva las rocas que caen\n"
+        "🪨 Esquiva las rocas que aparecen\n"
         "🦅 Esquiva las aves que vuelan\n"
         "\n");
     texto->setFont(QFont("Arial", 20));
@@ -236,18 +237,9 @@ void Entrenamiento::cuentaRegresiva()
             qDebug() << "Tiempo agotado. No se recolectaron suficientes piedras.";
             pantallaDerrota();
         } else {
-            //qDebug() << "Tiempo agotado, pero recolectó suficientes piedras.";
             pantallaDerrota();
         }
     }
-}
-
-void Entrenamiento::keyPressEvent(QKeyEvent *event)
-{
-    if (event->key() == Qt::Key_Escape) {
-        on_pausa_clicked();
-    }
-    QWidget::keyPressEvent(event);
 }
 
 void Entrenamiento::on_pausa_clicked()

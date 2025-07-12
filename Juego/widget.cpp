@@ -15,7 +15,7 @@ Widget::Widget(QWidget *parent)
     musicaFondo = new QMediaPlayer(this);
     musicaFondo->setSource(QUrl("qrc:/musica/music.mp3"));
     volumen = new QAudioOutput(this);
-    volumen->setVolume(0.0);
+    volumen->setVolume(1.0);
     musicaFondo->setAudioOutput(volumen);
     musicaFondo->setLoops(QMediaPlayer::Infinite);
     musicaFondo->play();
@@ -37,7 +37,7 @@ Widget::~Widget()
 
 void Widget::mostrarSeleccion()
 {
-    volumen->setVolume(0.0);
+    volumen->setVolume(1.0);
     entrenamiento->limpiaObjetos();
     combate->limpiaObjetos();
     ui->stackedWidget->setCurrentWidget(ui->page); // Volver a pantalla de selección
@@ -45,6 +45,7 @@ void Widget::mostrarSeleccion()
 
 void Widget::mostrarMenu()
 {
+    volumen->setVolume(1.0);
     entrenamiento->limpiaObjetos();
     combate->limpiaObjetos();
     ui->stackedWidget->setCurrentWidget(ui->paginaMenu);
@@ -60,7 +61,7 @@ void Widget::reiniciarSeleccion()
 
 void Widget::iniciarEntrenamiento(QString personaje, int vidas, int nivel, int derrotas)
 {
-    volumen->setVolume(0.0);
+    volumen->setVolume(0.1);
     qDebug() << "Iniciando entrenamiento con" << personaje;
 
     entrenamiento->limpiaObjetos();

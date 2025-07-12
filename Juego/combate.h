@@ -28,6 +28,8 @@ public:
     void pantallaDerrota();
     void pantallaVictoria();
     void iniciarCombate(QString personajeSeleccionado);
+    void iniciarNivel2(QString personajeSeleccionado);
+    void iniciarCombateTuto();
 
     void mensajeFinal(QString mensaje);
 
@@ -40,8 +42,11 @@ public slots:
 
 signals:
     void combateTerminado();
+    void volverSeleccionar();
 
 private slots:
+
+    void on_pausa_clicked();
 
 private:
     Ui::Combate *ui;
@@ -71,6 +76,8 @@ private:
     int rondasGanadasJugador = 0;
     int rondasGanadasRoshi = 0;
     int rondaActual = 1;
+
+     bool tutorialMostrado = false;
 
 };
 

@@ -163,6 +163,16 @@ void Personaje::spriteVictoria()
 
 }
 
+void Personaje::setEnCombate(bool estado)
+{
+    enCombate = estado;
+}
+
+bool Personaje::getEnCombate() const
+{
+    return enCombate;
+}
+
 void Personaje::setEstaMuerto(bool muerto) {
     estaMuerto = muerto;
 }

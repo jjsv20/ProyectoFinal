@@ -71,6 +71,7 @@ void Roshi::reaccionGolpe()
     });
 }
 
+
 void Roshi::reiniciar()
 {
     setEstaMuerto(false);
