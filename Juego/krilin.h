@@ -34,6 +34,7 @@ public slots:
     void reaccionGolpe() override;
     void desactivarTimers() override;
     void reanudarAnimacion() override;
+    void spriteVictoria() override;
     void setPausa(bool estado) { enPausa = estado; }
 
 protected:

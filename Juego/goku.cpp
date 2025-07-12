@@ -66,8 +66,7 @@ void Goku::animar()
         frameActual = (frameActual + 1) % totalFramesDerecha;
         coordenadaX = frameActual * ancho;
         setPixmap(pixmap->copy(coordenadaX, coordenadaY, ancho, alto));
-        if(x() > 10)
-            setPos(x() + 10, y());
+        //setPos(x() + 10, y());
         emit moverFondoSignal(20);
     } else if (moviendoIzquierda) {
         coordenadaY = 200;
@@ -138,15 +137,17 @@ void Goku::colisionPiedras()
                     QTimer* animacion = new QTimer(this);
                     connect(animacion, &QTimer::timeout, this, [=]() mutable {
                         spriteVictoria();
+                        frameActual++;
                         if (frameActual >= 7) {
+                            victoriaGoku.play();
                             animacion->stop();
                             animacion->deleteLater();
+                            nivelCompletado = true;
                             emit partidaCompletada();
                             qDebug() << "Emit partidaCompletada por recolectar piedras";
                         }
                     });
                     animacion->start(100);
-                    emit partidaCompletada();
                     qDebug() << "Emit partidaCompletada por recolectar piedras";
                     qDebug() << "Nivel completado:" << this->nivelCompletado;
                 });
@@ -222,24 +223,11 @@ void Goku::animarPatada()
     coordenadaX = frameActual * ancho;
     setPixmap(pixmap->copy(coordenadaX, coordenadaY, ancho, alto));
 
-    /*/if (!yaGolpeo) {
-        const auto items = scene()->items();
-        for (auto item : items) {
-            Roshi* r = dynamic_cast<Roshi*>(item);
-            if (r && this->collidesWithItem(r)) {
-                r->reaccionGolpe();
-                yaGolpeo = true;
-                break;
-            }
-        }
-    }/*/
-
     if (!yaGolpeo && getRival() && collidesWithItem(getRival())) {
         getRival()->reaccionGolpe();
         yaGolpeo = true;
         qDebug() << "Goku golpeó";
     }
-
 
     frameActual++;
 
@@ -342,6 +330,7 @@ void Goku::spriteVictoria()
     coordenadaY = 700;
     coordenadaX = frameActual * ancho;
     setPixmap(pixmap->copy(coordenadaX, coordenadaY, ancho, alto));
+    update();
 }
 
 

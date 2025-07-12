@@ -62,10 +62,14 @@ void Widget::iniciarEntrenamiento(QString personaje, int vidas, int nivel, int d
 {
     volumen->setVolume(0.0);
     qDebug() << "Iniciando entrenamiento con" << personaje;
+
     entrenamiento->limpiaObjetos();
-    entrenamiento->iniciarNivel1(personaje, 5, 1, 0);
+    entrenamiento->iniciarNivelTuto(personaje, nivel);
+
     ui->stackedWidget->setCurrentWidget(ui->paginaEntrenamiento);
+
 }
+
 
 void Widget::iniciarCombate(QString personaje)
 {

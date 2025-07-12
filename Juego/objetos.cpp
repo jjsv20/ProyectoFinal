@@ -52,7 +52,7 @@ void Objetos::moverObjeto()
         moveBy(-8, 0);
     }else if(tipo == "ave"){
         qreal dx = -6;
-        qreal dy = 5 * std::sin(contadorMovimiento * 0.1);
+        qreal dy = 2 * std::sin(contadorMovimiento * 0.1);
         moveBy(dx, dy);
         contadorMovimiento++;
         contadorAnimacion++;

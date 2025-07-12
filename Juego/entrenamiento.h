@@ -22,8 +22,6 @@ public:
     explicit Entrenamiento(QWidget *parent = nullptr);
     ~Entrenamiento();
 
-    //void iniciarNivel1(QString personajeSeleccionado, int vidasIniciales, int nivel);
-
 private slots:
     void on_pausa_clicked();
 
@@ -38,7 +36,12 @@ public slots:
     void reanudarTimersGlobales();
     void limpiaObjetos();
     void iniciarNivel1(QString personajeSeleccionado, int vidasIniciales, int nivel, int derrotas);
+    void iniciarNivelTuto(QString personajeSeleccionado, int nivel);
+    void mostrarTutorial();
     void cuentaRegresiva();
+
+protected:
+    void keyPressEvent(QKeyEvent *event);
 
 signals:
     void volverSeleccionar();
@@ -84,6 +87,8 @@ private:
     QGraphicsTextItem *textoTiempo;
 
     int contadorDerrotas;
+
+    bool tutorialMostrado = false;
 
 };
 

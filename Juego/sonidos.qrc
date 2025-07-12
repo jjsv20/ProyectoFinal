@@ -12,5 +12,8 @@
         <file>sonido/saltoGoku.wav</file>
         <file>sonido/salyoKrilin.wav</file>
         <file>sonido/seleccionPersonaje.wav</file>
+        <file>sonido/victoriaGoku.wav</file>
+        <file>sonido/victoriaKrilin.wav</file>
+        <file>sonido/victoriaRoshi.wav</file>
     </qresource>
 </RCC>

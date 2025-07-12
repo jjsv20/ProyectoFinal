@@ -121,12 +121,27 @@ void Krilin::colisionPiedras()
                 contadorPiedras += 1;
                 qDebug() << "Piedras recolectadas:" << contadorPiedras;
                 if(puntos) {
-                    puntos->setPlainText("x " + QString::number(contadorPiedras));
+                    puntos->setPlainText("x " + QString::number(contadorPiedras) + "/10");
                 }
             }
             if (contadorPiedras == 10 && !getNivelCompletado()) {
                 QTimer::singleShot(1500, this, [=]() {
-                    emit partidaCompletada();
+                    desactivarTimers();
+                    frameActual = 7;
+                    QTimer* animacion = new QTimer(this);
+                    connect(animacion, &QTimer::timeout, this, [=]() mutable {
+                        spriteVictoria();
+                        frameActual++;
+                        if (frameActual >= 9) {
+                            victoriaKrilin.play();
+                            animacion->stop();
+                            animacion->deleteLater();
+                            nivelCompletado = true;
+                            emit partidaCompletada();
+                            qDebug() << "Emit partidaCompletada por recolectar piedras";
+                        }
+                    });
+                    animacion->start(100);
                     qDebug() << "Emit partidaCompletada por recolectar piedras";
                     qDebug() << "Nivel completado:" << this->nivelCompletado;
                 });
@@ -145,6 +160,17 @@ void Krilin::colisionRocas()
             if(this->collidesWithItem(r)){
                 sonidoGolpeRecibidoKrilin.play();
                 qDebug() << "Colision roca";
+                perderVida();
+                break;
+            }
+        }
+    }
+    for(auto i : items){
+        Objetos *a = dynamic_cast<Objetos*>(i);
+        if(a && a->getTipo() == "ave"){
+            if(this->collidesWithItem(a)){
+                sonidoGolpeRecibidoKrilin.play();
+                qDebug() << "Colision ave";
                 perderVida();
                 break;
             }
@@ -292,6 +318,14 @@ void Krilin::reanudarAnimacion()
     caminar->start(40);
     saltar->start(40);
     timerColision->start(50);
+}
+
+void Krilin::spriteVictoria()
+{
+    coordenadaY = 600;
+    coordenadaX = frameActual * ancho;
+    setPixmap(pixmap->copy(coordenadaX, coordenadaY, ancho, alto));
+    update();
 }
 
 void Krilin::reiniciar()

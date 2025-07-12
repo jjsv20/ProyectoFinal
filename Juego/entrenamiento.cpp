@@ -15,6 +15,9 @@ Entrenamiento::Entrenamiento(QWidget *parent)
     ui->graphicsView->setGeometry(this->rect());
     ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->graphicsView->setFocusPolicy(Qt::NoFocus);
+    ui->graphicsView->viewport()->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+
 
     texto = nullptr;
     vidasT = nullptr;
@@ -84,6 +87,10 @@ void Entrenamiento::iniciarNivel1(QString personajeSeleccionado, int vidasInicia
     }
 
     escenaEntrenamiento->addItem(personajeActual);
+    personajeActual->setFlag(QGraphicsItem::ItemIsFocusable);
+    personajeActual->setFocus(Qt::ActiveWindowFocusReason);
+    //setFocus(Qt::ActiveWindowFocusReason);
+
 
     QPixmap piedraPixmap(":/imagenes/piedra.png");
     piedraItem = escenaEntrenamiento->addPixmap(piedraPixmap.scaled(30, 30, Qt::KeepAspectRatio, Qt::SmoothTransformation));
@@ -111,8 +118,6 @@ void Entrenamiento::iniciarNivel1(QString personajeSeleccionado, int vidasInicia
     personajeActual->setContadorVidas(10);
     personajeActual->inciarBarraVida(escenaEntrenamiento, 70, 15, false);
     personajeActual->setContadorPiedras(0);
-    personajeActual->setFlag(QGraphicsItem::ItemIsFocusable);
-    personajeActual->setFocus();
     personajeActual->iniciarAnimacion();
     personajeActual->setEstaMuerto(false);
 
@@ -124,13 +129,15 @@ void Entrenamiento::iniciarNivel1(QString personajeSeleccionado, int vidasInicia
     connect(timerPiedras, &QTimer::timeout, this, &Entrenamiento::crearPiedras);
     timerPiedras->start(5000);
 
-    timerRocas = new QTimer(this);
-    connect(timerRocas, &QTimer::timeout, this, &Entrenamiento::crearRocas);
-    timerRocas->start(2000);
-
-    timerAves = new QTimer(this);
-    connect(timerAves, &QTimer::timeout, this, &Entrenamiento::crearAves);
-    timerAves->start(1000);
+    if(nivel == 1){
+        timerRocas = new QTimer(this);
+        connect(timerRocas, &QTimer::timeout, this, &Entrenamiento::crearRocas);
+        timerRocas->start(2000);
+    }else if(nivel == 2){
+        timerAves = new QTimer(this);
+        connect(timerAves, &QTimer::timeout, this, &Entrenamiento::crearAves);
+        timerAves->start(1000);
+    }
 
     tiempo = 60;
     textoTiempo = escenaEntrenamiento->addText("Tiempo: 60", QFont("Arial", 24));
@@ -140,6 +147,78 @@ void Entrenamiento::iniciarNivel1(QString personajeSeleccionado, int vidasInicia
     timerTiempo = new QTimer(this);
     connect(timerTiempo, &QTimer::timeout, this, &Entrenamiento::cuentaRegresiva);
     timerTiempo->start(1000);
+
+    ui->pausa->show();
+    ui->pausa->setEnabled(true);
+}
+
+void Entrenamiento::iniciarNivelTuto(QString personajeSeleccionado, int nivel)
+{
+    limpiaObjetos();
+
+    personaje = personajeSeleccionado;
+    nivelActual = nivel;
+    contadorDerrotas = 0;
+
+    if(!tutorialMostrado){
+        mostrarTutorial();
+    }else{
+        iniciarNivel1(personaje, 10, nivelActual, contadorDerrotas);
+    }
+}
+
+void Entrenamiento::mostrarTutorial()
+{
+    detenerTimersGlobales();
+    if(personajeActual){
+        personajeActual->clearFocus();
+    }
+
+    QGraphicsRectItem* fondoTuto = new QGraphicsRectItem(0, 0, 1080, 720);
+    fondoTuto->setBrush(QColor(0, 0, 0, 150));
+    fondoTuto->setZValue(20);
+    escenaEntrenamiento->addItem(fondoTuto);
+
+    QGraphicsTextItem* texto = new QGraphicsTextItem(
+        "🕹️ CONTROLES\n"
+        "→ Flechas izquierda/derecha para moverte\n"
+        "↑ Flecha arriba para saltar\n"
+        "\n"
+        "🎯 OBJETIVO\n"
+        "✅ Recolecta 10 piedras\n"
+        "⏱️ Tienes 60 segundos\n"
+        "\n"
+        "⚠️ CUIDADO\n"
+        "🪨 Esquiva las rocas que caen\n"
+        "🦅 Esquiva las aves que vuelan\n"
+        "\n");
+    texto->setFont(QFont("Arial", 20));
+    texto->setDefaultTextColor(Qt::white);
+    QRectF rect = texto->boundingRect();
+    texto->setPos((1080 - rect.width()) / 2, 130);
+    texto->setZValue(101);
+    escenaEntrenamiento->addItem(texto);
+
+    QTimer::singleShot(8000, this, [=]() {
+        if (fondoTuto && fondoTuto->scene())
+            escenaEntrenamiento->removeItem(fondoTuto);
+        delete fondoTuto;
+
+        if (texto && texto->scene())
+            escenaEntrenamiento->removeItem(texto);
+        delete texto;
+
+         tutorialMostrado = true;
+
+        iniciarNivel1(personaje, 10, nivelActual, contadorDerrotas);
+
+        QTimer::singleShot(100, this, [=]() {
+            if (personajeActual) {
+                ui->graphicsView->setFocus();
+                qDebug() << "Focus después del tutorial: " << personajeActual->hasFocus();
+            }
+        });
+    });
 }
 
 void Entrenamiento::cuentaRegresiva()
@@ -153,14 +232,22 @@ void Entrenamiento::cuentaRegresiva()
         textoTiempo->setPlainText("Tiempo: " + QString::number(tiempo));
     if (tiempo <= 0) {
         timerTiempo->stop();
-        if (personajeActual->getContadorPiedras() < 4) {
+        if (nivelActual == 1 && personajeActual->getContadorPiedras() < 4) {
             qDebug() << "Tiempo agotado. No se recolectaron suficientes piedras.";
             pantallaDerrota();
         } else {
-            qDebug() << "Tiempo agotado, pero recolectó suficientes piedras.";
-            pantallaVictoria();
+            //qDebug() << "Tiempo agotado, pero recolectó suficientes piedras.";
+            pantallaDerrota();
         }
     }
+}
+
+void Entrenamiento::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Escape) {
+        on_pausa_clicked();
+    }
+    QWidget::keyPressEvent(event);
 }
 
 void Entrenamiento::on_pausa_clicked()
@@ -180,6 +267,8 @@ void Entrenamiento::on_pausa_clicked()
     escenaEntrenamiento->addItem(titulo);
 
     QPushButton* botonReanudar = new QPushButton("Reanudar", this);
+    botonReanudar->setFocusPolicy(Qt::NoFocus);
+
     botonReanudar->setGeometry(450, 300, 180, 40);
     botonReanudar->raise();
     botonReanudar->show();
@@ -203,6 +292,12 @@ void Entrenamiento::on_pausa_clicked()
         reanudarTimersGlobales();
         ui->pausa->show();
         ui->pausa->setEnabled(true);
+        QTimer::singleShot(100, this, [=]() {
+            if (personajeActual) {
+                ui->graphicsView->setFocus();
+                qDebug() << "Focus después del tutorial: " << personajeActual->hasFocus();
+            }
+        });
     });
     connect(botonMenu, &QPushButton::clicked, this, [=]() {
         emit volverSeleccionar();
@@ -254,7 +349,7 @@ void Entrenamiento::crearRocas()
 
 void Entrenamiento::crearAves()
 {
-    if(aves.count() < 2){
+    if(aves.count() < 3){
         Objetos *a = new Objetos("ave", this);
         escenaEntrenamiento->addItem(a);
         aves.append(a);
@@ -334,7 +429,12 @@ void Entrenamiento::pantallaVictoria() {
         delete victoriaTexto;
         victoriaTexto = nullptr;
         limpiaObjetos();
-        emit entrenamientoTerminado(personaje, vidasRestantes, nivelActual, derrotas);
+
+        if(nivelActual == 1){
+            iniciarNivel1(personaje, vidasRestantes, 2, derrotas);
+        }else {
+            emit entrenamientoTerminado(personaje, vidasRestantes, nivelActual, derrotas);
+        }
     });
 }
 
@@ -362,8 +462,6 @@ void Entrenamiento::detenerTimersGlobales()
 
     if (timerTiempo) {
         timerTiempo->stop();
-        timerTiempo->deleteLater();
-        timerTiempo = nullptr;
     }
 
 }

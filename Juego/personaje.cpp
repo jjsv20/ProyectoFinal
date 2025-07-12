@@ -16,6 +16,9 @@ Personaje::Personaje(QObject *parent)
     muerteRoshi.setSource(QUrl("qrc:/sonido/muerteRoshi.wav"));
     muerteKrilin.setSource(QUrl("qrc:/sonido/muerteKrilin.wav"));
     saltoKrilin.setSource(QUrl("qrc:/sonido/salyoKrilin.wav"));
+    victoriaGoku.setSource(QUrl("qrc:/sonido/victoriaGoku.wav"));
+    victoriaKrilin.setSource(QUrl("qrc:/sonido/victoriaKrilin.wav"));
+    victoriaRoshi.setSource(QUrl("qrc:/sonido/victoriaRoshi.wav"));
 
 }
 

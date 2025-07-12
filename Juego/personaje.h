@@ -80,10 +80,10 @@ protected:
 
     QSoundEffect sonidoSalto, saltoKrilin;
     QSoundEffect sonidoAterrizaje;
-    QSoundEffect sonidoGolpeRecibidoGoku, muerteGoku;
-    QSoundEffect sonidoGolpeRecibidoKrilin, muerteKrilin;
+    QSoundEffect sonidoGolpeRecibidoGoku, muerteGoku, victoriaGoku;
+    QSoundEffect sonidoGolpeRecibidoKrilin, muerteKrilin, victoriaKrilin;
     QSoundEffect sonidoPremio;
-    QSoundEffect sonidoGolpeRecibidoRoshi, muerteRoshi;
+    QSoundEffect sonidoGolpeRecibidoRoshi, muerteRoshi, victoriaRoshi;
 
     QGraphicsRectItem* barraVida = nullptr;
     QGraphicsScene* escenaActual = nullptr;
