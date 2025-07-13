@@ -406,9 +406,9 @@ void Krilin::keyPressEvent(QKeyEvent *event)
     }else if (event->key() == Qt::Key_Space && !event->isAutoRepeat()) {
         if(!saltando){
             if (moviendoDerecha){
-                velocidadX = 10;
+                velocidadX = 7;
             }else if (moviendoIzquierda){
-                velocidadX = -10;
+                velocidadX = -7;
             }else {
                 velocidadX = 0;
             }
@@ -416,7 +416,7 @@ void Krilin::keyPressEvent(QKeyEvent *event)
             caminar->stop();
             velocidadY = -40;
             saltando = true;
-            saltar->start(40);
+            saltar->start(30);
         }
     }else if (event->key() == Qt::Key_Z && !event->isAutoRepeat()) {
         if (!patada && !puno && !saltando) {

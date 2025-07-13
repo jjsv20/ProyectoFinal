@@ -11,7 +11,7 @@ class Objetos : public QObject, public QGraphicsPixmapItem
     Q_OBJECT
 public:
     explicit Objetos(QString tiopObejto, QObject *parent = nullptr);
-    //virtual void mover();
+
     void detener();
     void reanudar();
     QString getTipo() const;

@@ -45,7 +45,6 @@ signals:
     void volverSeleccionar();
 
 private slots:
-
     void on_pausa_clicked();
 
 private:

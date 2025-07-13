@@ -32,11 +32,8 @@ signals:
 
 private slots:
     void on_regresar_clicked();
-
     void on_btnKrilin_clicked();
-
     void on_bthGoku_clicked();
-
     void on_btnComenzar_clicked();
 
 private:

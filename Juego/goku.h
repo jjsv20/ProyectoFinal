@@ -38,12 +38,6 @@ public slots:
     void setPausa(bool estado) { enPausa = estado; }
     void spriteVictoria() override;
 
-/*/signals:
-    void moverFondoSignal(int dx);
-    void reiniciarPartida();
-    void finalPartida();
-    void partidaCompletada();/*/
-
 protected:
     void keyReleaseEvent(QKeyEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
