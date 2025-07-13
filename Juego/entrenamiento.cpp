@@ -48,7 +48,7 @@ Entrenamiento::~Entrenamiento()
     qDebug() << "Entrenamiento destruido correctamente";
 }
 
-void Entrenamiento::iniciarNivel1(QString personajeSeleccionado, int vidasIniciales, int nivel, int derrotas)
+void Entrenamiento::iniciarNivel1(QString personajeSeleccionado, int nivel, int derrotas)
 {
     limpiaObjetos();
 
@@ -163,7 +163,7 @@ void Entrenamiento::iniciarNivelTuto(QString personajeSeleccionado, int nivel)
     if(!tutorialMostrado){
         mostrarTutorial();
     }else{
-        iniciarNivel1(personaje, 10, nivelActual, contadorDerrotas);
+        iniciarNivel1(personaje, nivelActual, contadorDerrotas);
     }
 }
 
@@ -211,7 +211,7 @@ void Entrenamiento::mostrarTutorial()
 
          tutorialMostrado = true;
 
-        iniciarNivel1(personaje, 10, nivelActual, contadorDerrotas);
+        iniciarNivel1(personaje, nivelActual, contadorDerrotas);
 
         QTimer::singleShot(100, this, [=]() {
             if (personajeActual) {
@@ -383,7 +383,7 @@ void Entrenamiento::pantallaDerrota() {
 
         if (contadorDerrotas < 3) {
             limpiaObjetos();
-            iniciarNivel1(personaje, 5, nivelActual, contadorDerrotas);
+            iniciarNivel1(personaje, nivelActual, contadorDerrotas);
         } else {
             limpiaObjetos();
             emit volverSeleccionar(); // vuelve al menú
@@ -423,7 +423,7 @@ void Entrenamiento::pantallaVictoria() {
         limpiaObjetos();
 
         if(nivelActual == 1){
-            iniciarNivel1(personaje, vidasRestantes, 2, derrotas);
+            iniciarNivel1(personaje, 2, derrotas);
         }else {
             emit entrenamientoTerminado(personaje, vidasRestantes, nivelActual, derrotas);
         }

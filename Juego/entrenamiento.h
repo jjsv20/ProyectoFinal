@@ -35,7 +35,7 @@ public slots:
     void detenerTimersGlobales();
     void reanudarTimersGlobales();
     void limpiaObjetos();
-    void iniciarNivel1(QString personajeSeleccionado, int vidasIniciales, int nivel, int derrotas);
+    void iniciarNivel1(QString personajeSeleccionado, int nivel, int derrotas);
     void iniciarNivelTuto(QString personajeSeleccionado, int nivel);
     void mostrarTutorial();
     void cuentaRegresiva();
