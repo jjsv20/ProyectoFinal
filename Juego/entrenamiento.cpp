@@ -183,7 +183,7 @@ void Entrenamiento::mostrarTutorial()
     QGraphicsTextItem* texto = new QGraphicsTextItem(
         "🕹️ CONTROLES\n"
         "→ Flechas izquierda/derecha para moverte\n"
-        "↑ Flecha arriba para saltar\n"
+        "Espacio para saltar\n"
         "\n"
         "🎯 OBJETIVO\n"
         "✅ Recolecta 10 piedras\n"
